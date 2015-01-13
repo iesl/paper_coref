@@ -13,9 +13,6 @@ import cc.factorie.app.nlp.Document
  * @author John Sullivan
  */
 
-case class Citation(rawAuthor:String, rawTitle:String, rawCoAuthors:List[String], date:String, paperId:Option[String], citingPaperId:Option[String]) {
-  lazy val id = citingPaperId.getOrElse(paperId.get)
-}
 object Baseline {
 
   val fieldSep = Character.toString(31.toChar)
@@ -57,11 +54,19 @@ object Baseline {
     val goldLabels = readLabels(labelFile)
     val allCitations = new File(dataFileDir).listFiles().toIterator.flatMap(f =>readCitations(f.getAbsolutePath)).toArray
 
-    val citations = allCitations.filter(c => goldLabels.contains(c.id))
+    println("Gold list has %d mentions across %d entities".format(goldLabels.keySet.size, goldLabels.values.toSet.size))
+
+    val citations = allCitations.filter(c => goldLabels.contains(c.goldLabel.get))
 
     println("Dropped %d of %d citations due to not being on gold list".format(allCitations.size - citations.size, allCitations.size))
 
-    val corefPred = citations.par.map(cit => cit.id -> corefTitleHash(cit.rawTitle)).seq
+    val citCounts = citations.groupBy(_.goldLabel.get).mapValues(_.size)
+    println("%d ids appeared more than once in the data, %d were unique"
+      .format(citCounts.filter(_._2 > 1).keySet.size,
+        citCounts.filter(_._2 == 1).keySet.size))
+        //citCounts.filter(_._2 > 1).map(_._1 + "\t" + _._2).mkString("\n")))
+    citCounts foreach println
+    val corefPred = citations.par.map(cit => cit.goldLabel.get -> corefTitleHash(cit.rawTitle)).seq
       //.groupBy(_._1).map(_._2).map(_.map(_._2.id)).zipWithIndex.flatMap { case (cluster, idx) =>
       //cluster.map(_ -> idx.toString)
     //}

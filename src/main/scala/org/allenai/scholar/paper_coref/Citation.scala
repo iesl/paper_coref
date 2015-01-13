@@ -30,10 +30,14 @@ object ParsedPaper {
   def loadFromDir(dirName:String):Iterable[ParsedPaper] = new File(dirName)
     .listFiles().flatMap(f => new BufferedReader(new InputStreamReader(new FileInputStream(f))).toIterator)
     .map(line => parse(line).extract[Citation])
-    .groupBy(_.paperOrCitingId).map {case (_, cits) =>
+    .groupBy(_.paperOrCitingId).flatMap {case (_, cits) =>
       val paperCits = cits.filter(_.paperId.isDefined)
-      assert(paperCits.size == 1, "Expected a single paper copy, instead found: %s\nand:%s".format(paperCits.mkString("\n"), cits.mkString("\n")))
-      val paperCit = paperCits.head
-      ParsedPaper(paperCit, cits.filter(_.citingPaperId.isDefined).toList)
+      if(paperCits.size == 1) {
+        val paperCit = paperCits.head
+        Some(ParsedPaper(paperCit, cits.filter(_.citingPaperId.isDefined).toList))
+      } else {
+        println("WARNING: Paper Id %s had no root paper".format(cits.head.paperOrCitingId))
+        None
+      }
   }
 }

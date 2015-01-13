@@ -13,8 +13,8 @@ object BuildGoldAnnotations {
   def labelCitations(rawDocs:Iterable[ParsedPaper], paperMetadata:Iterable[PaperMetadata], bareCitations:Iterable[BareCitation]):Iterable[Citation] = {
     val metadataMap = paperMetadata.map(m => m.id -> m).toMap
 
-    val goldCitDocs = bareCitations.groupBy(_.from).map{ case (k, vs) =>
-      GoldCitationDoc(metadataMap(k), vs.map(v => metadataMap(v.to)))
+    val goldCitDocs = bareCitations.groupBy(_.from).flatMap{ case (k, vs) =>
+      metadataMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => metadataMap.get(v.to))))
     }
 
     val predPapers = rawDocs.map{ pd => Alignable(pd.selfCit.rawTitle, pd) }

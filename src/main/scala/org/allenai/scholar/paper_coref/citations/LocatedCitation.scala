@@ -5,6 +5,7 @@ import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import org.allenai.scholar.paper_coref.{Baseline, GoldCitationDoc, BareCitation, PaperMetadata}
+import cc.factorie.app.strings
 
 object ParsedPaper {
   def fromCitations(cits:Iterable[LocatedCitation]):ParsedPaper = {
@@ -81,6 +82,10 @@ object CitationMetrics extends App {
   val titleMatchDowncaseTrim = {(pp:ParsedPaper, gp:GoldCitationDoc) => pp.self.rawCitation.rawTitle.trim.toLowerCase.replaceAll("""\s+""", " ") == gp.doc.title.trim.toLowerCase.replaceAll("""\s+""", " ")}
   val titleMatchStemmed = {(pp:ParsedPaper, gp:GoldCitationDoc) => Baseline.corefTitleHash(pp.self.rawCitation.rawTitle) == Baseline.corefTitleHash(gp.doc.title)}
 
+  def titleMatchStemmedEditDistThreshold(threshold:Int):((ParsedPaper, GoldCitationDoc) => Boolean) = {
+    {(pp:ParsedPaper, gp:GoldCitationDoc) => strings.editDistance(Baseline.corefTitleHash(pp.self.rawCitation.rawTitle), Baseline.corefTitleHash(gp.doc.title)) < threshold}
+  }
+
   println("Aligned papers title exact match: " + alignedPapers.percentWhere(titleMatchExact.tupled))
   println("Aligned papers title downcase trim match: " + alignedPapers.percentWhere(titleMatchDowncaseTrim.tupled))
   println("Aligned papers title stemmed match: " + alignedPapers.percentWhere(titleMatchStemmed.tupled))
@@ -88,6 +93,11 @@ object CitationMetrics extends App {
   println("Aligned papers without empty titles title exact match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchExact.tupled))
   println("Aligned papers without empty titles title downcase trim match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchDowncaseTrim.tupled))
   println("Aligned papers without empty titles title stemmed match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmed.tupled))
+  println("Aligned papers without empty titles title stemmed threshold 1: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(1).tupled))
+  println("Aligned papers without empty titles title stemmed threshold 2: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(2).tupled))
+  println("Aligned papers without empty titles title stemmed threshold 3: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(3).tupled))
+  println("Aligned papers without empty titles title stemmed threshold 4: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(4).tupled))
+  println("Aligned papers without empty titles title stemmed threshold 5: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(5).tupled))
 }
 
 

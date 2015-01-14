@@ -17,16 +17,27 @@ object BuildGoldAnnotations {
       metadataMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => metadataMap.get(v.to))))
     }
 
-    val predPapers = rawDocs.map{ pd => Alignable(pd.selfCit.rawTitle, pd) }
-    val goldPapers = goldCitDocs.map{ gcd => Alignable(gcd.doc.title, gcd)}
+    val idToPred = rawDocs.map(pp => pp.selfCit.paperId.get -> pp).toMap
+    val idToGold = goldCitDocs.map(gd => gd.doc.id -> gd).toMap
 
-    val paperAlignment = Alignment.align(predPapers, goldPapers, scoreEdge)
+    val paperAlignment = (idToGold.keySet intersect idToPred.keySet) map { k =>
+      idToPred(k) -> idToGold(k)
+    }
+
+    println(idToPred.keySet.--(idToGold.keySet).size + " ids in parse that were not in gold")
+    println(idToGold.keySet.--(idToPred.keySet).size + " ids in gold that were not in parse")
+
+    //val predPapers = rawDocs.map{ pd => Alignable(pd.selfCit.rawTitle, pd) }
+    //val goldPapers = goldCitDocs.map{ gcd => Alignable(gcd.doc.title, gcd)}
+
+
+    //val paperAlignment = Alignment.align(predPapers, goldPapers, scoreEdge)
 
     paperAlignment.flatMap { case (parsedDoc, goldDoc) =>
       val predBib = parsedDoc.bib.map(rc => Alignable(rc.rawTitle, rc))
       val goldBib = goldDoc.citations.map(gc => Alignable(gc.title, gc))
 
-      Alignment.align(predBib, goldBib, scoreEdge).map { case (predCit, paperMeta) =>
+      Alignment.align(predBib, goldBib, scoreEdge).toSeq.map { case (predCit, paperMeta) =>
         predCit withGoldLabel paperMeta.id
       }.+:(parsedDoc.selfCit withGoldLabel goldDoc.doc.id)
     }
@@ -58,30 +69,6 @@ object BuildGoldAnnotations {
     println("Writing complete")
   }
 
-  /*
-  def labelCitationsX = {
-
-    val metadataMap = paperMetadata.get.map(m => m.id -> m).toMap
-
-    val goldCitDocs = bareCitations.get.groupBy(_.from).map{ case (k, vs) =>
-      GoldCitationDoc(metadataMap(k), vs.map(v => metadataMap(v.to)))
-    }
-
-    val predPapers = parscitDocs.get.map{ pd => Alignable(pd.doc.title, pd) }
-    val goldPapers = goldCitDocs.map{ gcd => Alignable(gcd.doc.title, gcd)}
-
-    val paperAlignment = Alignment.align(predPapers.collect(), goldPapers, scoreEdge)
-
-    sparkContext.parallelize(paperAlignment.flatMap { case (parsedDoc, goldDoc) =>
-      val predBib = parsedDoc.doc.rawCitations.map(rc => Alignable(rc.rawTitle, rc))
-      val goldBib = goldDoc.citations.map(gc => Alignable(gc.title, gc))
-
-      Alignment.align(predBib, goldBib, scoreEdge).map { case (rc, pm) =>
-        LabeledCitation(pm.id, rc)
-      }.+:(LabeledCitation(goldDoc.doc.id, RawCitation(parsedDoc.doc.title, parsedDoc.doc.authors, "")))
-    })
-  }
-  */
 }
 
 case class Alignable[T](alignOn:String, content:T)
@@ -92,6 +79,8 @@ object Alignment {
   def align[A,B](sources:Iterable[Alignable[A]], targets:Iterable[Alignable[B]], scoreEdge:((String, String) => Double)):Seq[(A, B)] = {
     val (sourcesPadded, targetsPadded) = if(sources.size != targets.size) {
       println("Expected the same number of sources and targets but found %d sources and %d targets".format(sources.size, targets.size))
+      println("Sources are:\n%s".format(sources))
+      println("Taregts are:\n%s".format(targets))
       if(sources.size > targets.size) {
         // todo null!!!!!!!
         sources -> (targets ++ Iterable.fill(sources.size - targets.size)(Alignable("", null.asInstanceOf[B])))
@@ -102,10 +91,13 @@ object Alignment {
       sources -> targets
     }
 
-    val alignment = sourcesPadded.map {case Alignable(sourceAlign, sourceContent) =>
+    val alignment = sourcesPadded.filter{case Alignable(s, c) => c != null}.map {case Alignable(sourceAlign, sourceContent) =>
       val Alignable(_, targetContent) = targetsPadded.maxBy{case Alignable(targetAlign, _) => scoreEdge(targetAlign, sourceAlign)}
+      if(targetContent == null) {
+        println("WARNING: aligned %s to empty string (score %.3f) in preference to:\n%s".format(sourceAlign, scoreEdge("", sourceAlign), targetsPadded.map{case Alignable(tA, cont) => scoreEdge(tA, sourceAlign) + "\t" + cont}.mkString("\n")))
+      }
       sourceContent -> targetContent
-    }.toSeq
+    }
 
 
     var sourceToTargetViolations = 0
@@ -127,7 +119,7 @@ object Alignment {
     println("Out of %d raw sources and %d raw targets, there were %d source to target violations (%.4f percent) and %d target to source violations (%.4f percent)"
       .format(sources.size, targets.size, sourceToTargetViolations, sourceToTargetViolations.toDouble/sources.size, targetToSourceViolations, targetToSourceViolations.toDouble/targets.size))
 
-    alignment
+    alignment.toSeq
   }
 }
 

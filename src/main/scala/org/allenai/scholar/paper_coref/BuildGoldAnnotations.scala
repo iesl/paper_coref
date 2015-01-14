@@ -3,6 +3,7 @@ package org.allenai.scholar.paper_coref
 import cc.factorie.app.strings
 import java.io.{BufferedWriter, FileWriter}
 
+
 case class GoldCitationDoc(doc:PaperMetadata, citations:Iterable[PaperMetadata])
 /**
  * @author John Sullivan
@@ -17,7 +18,7 @@ object BuildGoldAnnotations {
       metadataMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => metadataMap.get(v.to))))
     }
 
-    val idToPred = rawDocs.map(pp => pp.selfCit.paperId.get -> pp).toMap
+    val idToPred = rawDocs.map(pp => pp.selfCit.foundInPaperId -> pp).toMap
     val idToGold = goldCitDocs.map(gd => gd.doc.id -> gd).toMap
 
     val paperAlignment = (idToGold.keySet intersect idToPred.keySet) map { k =>
@@ -48,9 +49,16 @@ object BuildGoldAnnotations {
     println("Loaded metadata")
     val cg = BareCitation fromFile args(1)
     println("Loaded citation graph")
-    val cits = ParsedPaper loadFromDir args(2)
+    val cits = ParsedPaper.fromCitations(CollapseCitations.fromDir(args(2)))
     println("Loaded citations")
     val wrt = new BufferedWriter(new FileWriter(args(3)))
+
+    println("Loaded %d papers with a total of %d bib citations".format(cits.size, cits.map(_.bib.size).sum))
+    val totalCits = cits.map(c => c.bib.size + 1).sum
+    val emptyTitles = cits.map(c => c.bib.count(_.rawTitle.trim.isEmpty) + (if(c.selfCit.rawTitle.trim.isEmpty) 1 else 0)).sum
+    val emptyAuthors = cits.map(c => c.bib.count(cit => cit.rawAuthors.isEmpty || cit.rawAuthors.forall(_.trim.isEmpty)) + (if(c.selfCit.rawAuthors.isEmpty || c.selfCit.rawAuthors.forall(_.trim.isEmpty)) 1 else 0)).sum
+    println("Out of a total of %d citations, %d have empty titles (%.3f percent) and %d have empty authors (%.3f percent)"
+      .format(totalCits, emptyTitles, (emptyTitles.toDouble/totalCits)/100, emptyAuthors, (emptyAuthors.toDouble/totalCits)/100))
 
     val labelled = labelCitations(cits, pm, cg)
 

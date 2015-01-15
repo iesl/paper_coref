@@ -1,6 +1,6 @@
 package org.allenai.scholar.paper_coref.citations
 
-import java.io.{File, BufferedReader, FileReader}
+import java.io._
 import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
@@ -77,7 +77,7 @@ object CitationMetrics extends App {
   println("Scraped papers aligned to gold: " + citsByPaper.keySet.percentWhere(c => goldCitDocs.contains(c)) + " of scraped")
   println("Scraped papers aligned to gold: " + goldCitDocs.keySet.percentWhere(c => citsByPaper.contains(c)) + " of gold")
 
-  val alignedPapers = citsByPaper.keySet.intersect(goldCitDocs.keySet).map(k => ParsedPaper.fromCitations(citsByPaper(k)) -> goldCitDocs(k)).toIterable
+  val alignedPapers = citsByPaper.keySet.intersect(goldCitDocs.keySet).map(k => ParsedPaper.fromCitations(citsByPaper(k)) -> goldCitDocs(k)).toSeq
 
   val titleStringMatchExact = {(s1:String, s2:String) => s1 == s2}
   val titleStringMatchDowncaseTrim = {(s1:String, s2:String) => s1.trim.toLowerCase.replaceAll("""\s+""", " ") == s2.trim.toLowerCase.replaceAll("""\s+""", " ")}
@@ -98,32 +98,40 @@ object CitationMetrics extends App {
   println("Aligned papers without empty titles title exact match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchExact.tupled))
   println("Aligned papers without empty titles title downcase trim match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchDowncaseTrim.tupled))
   println("Aligned papers without empty titles title stemmed match: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmed.tupled))
-  println("Aligned papers without empty titles title stemmed threshold 1: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(1).tupled))
-  println("Aligned papers without empty titles title stemmed threshold 2: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(2).tupled))
-  println("Aligned papers without empty titles title stemmed threshold 3: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(3).tupled))
-  println("Aligned papers without empty titles title stemmed threshold 4: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(4).tupled))
-  println("Aligned papers without empty titles title stemmed threshold 5: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(5).tupled))
+  //println("Aligned papers without empty titles title stemmed threshold 1: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(1).tupled))
+  //println("Aligned papers without empty titles title stemmed threshold 2: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(2).tupled))
+  //println("Aligned papers without empty titles title stemmed threshold 3: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(3).tupled))
+  //println("Aligned papers without empty titles title stemmed threshold 4: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(4).tupled))
+  //println("Aligned papers without empty titles title stemmed threshold 5: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(5).tupled))
 
 
-  // a levenshtein distance-based scoring metric that is non-negative and 0 only when the strings have no chars in common
-  val scoreDistPos = {(s1:String, s2:String) => (Seq(s1.size, s2.size).max - strings.editDistance(s1, s2)).toDouble}
+  println("Aligned Papers: " + alignedPapers.size)
 
-  val citAlign = alignedPapers.map { case (pp, gp) =>
-    val sources = pp.bib.map(p => Alignable(p.rawCitation.rawTitle, p))
-    val targets = gp.citations.map(p => Alignable(p.title, p))
-    Alignment.jaggedAlign(sources, targets, scoreDistPos)
+  println("Aligned Papers with empty predicted bibs: " + alignedPapers.percentWhere(_._1.bib.isEmpty))
+  println("Aligned Papers with empty gold bibs: " + alignedPapers.percentWhere(_._2.citations.isEmpty))
+  println("Aligned papers with empty gold and predicted bibs: " + alignedPapers.percentWhere{case (a, b) => a.bib.isEmpty && b.citations.isEmpty})
+  println("Aligned papers whose predicted bibs all have empty titles: " + alignedPapers.percentWhere(_._1.bib.forall(emptyTitle)))
+
+  val alignedCitations = alignedPapers.toSeq.map { case (pred, gold) =>
+    val sources = pred.bib.map(p => Alignable(p.rawCitation.rawTitle, p))
+    val targets = gold.citations.map(p => Alignable(p.title, p))
+    //println("About to align %d sources with %d targets".format(sources.size, targets.size))
+    Alignment.jaggedAlign(sources, targets, Alignment.scoreDistPos)
   }
 
-  println ("After alignment, empty alignments: " + citAlign.percentWhere{case AlignResult(a, _, _) => a.isEmpty})
+  println("Aligned cits: " + alignedCitations.size)
+  println ("After alignment, empty alignments: " + alignedCitations.percentWhere{case AlignResult(a, _, _) => a.isEmpty})
 
-  val citTitles = citAlign.flatMap { case AlignResult(aligned,_,_) => aligned }.map { case(lc, pm) =>
+  val citTitles = alignedCitations.flatMap { case AlignResult(aligned,_,_) => aligned }.map { case(lc, pm) =>
     lc.rawCitation.rawTitle -> pm.title
   }
 
   println("Aligned bib citations title exact match: " + citTitles.percentWhere(titleStringMatchExact.tupled))
   println("Aligned bib citations title downcase trim match: " + citTitles.percentWhere(titleStringMatchDowncaseTrim.tupled))
   println("Aligned bib citations title stemmed match: " + citTitles.percentWhere(titleStringMatchStemmed.tupled))
-
+  println("Nonempty Aligned bib citations title exact match: " + citTitles.filterNot(t => t._1.isEmpty || t._2.isEmpty).percentWhere(titleStringMatchExact.tupled))
+  println("Nonempty Aligned bib citations title downcase trim match: " + citTitles.filterNot(t => t._1.isEmpty || t._2.isEmpty).percentWhere(titleStringMatchDowncaseTrim.tupled))
+  println("Nonempty Aligned bib citations title stemmed match: " + citTitles.filterNot(t => t._1.isEmpty || t._2.isEmpty).percentWhere(titleStringMatchStemmed.tupled))
 }
 
 

@@ -9,6 +9,19 @@ case class Alignable[T](alignOn:String, content:T)
 case class AlignResult[A,B](aligned:Iterable[(A,B)], unalignedSources:Iterable[A], unalignedTargets:Iterable[B])
 object Alignment {
 
+  val scoreDistPos = {(s1:String, s2:String) =>
+    /*
+    val rawScore = strings.editDistance(s1, s2)
+    if(rawScore > 10) {
+      0
+    } else {
+      Seq(s1.size - s2.size).max - rawScore
+    }.toDouble
+    */
+    val rawScore = Seq(s1.size, s2.size).max - strings.editDistance(s1, s2)
+    (if(rawScore > 10) rawScore else 0).toDouble
+  }
+
   // this should be the Hungarian algorithm, produces the weighted bipartite matching with the highest score
   // this is probably overkill though, so for now we pick the min weight for each alignable and log and throw when there is a conflict
   def align[A,B](sources:Iterable[Alignable[A]], targets:Iterable[Alignable[B]], scoreEdge:((String, String) => Double)):Seq[(A, B)] = {
@@ -62,7 +75,7 @@ object Alignment {
     val edges = for (Alignable(src, srcCon) <- sources;
                      Alignable(tgt, tgtCon) <- targets;
                      weight = scoreEdge(src, tgt)
-                     if weight > 0.0) yield {
+                     if weight > 0.0 && src.nonEmpty && tgt.nonEmpty) yield {
       (weight, srcCon, tgtCon)
     }
 

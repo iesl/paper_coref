@@ -4,8 +4,9 @@ import java.io.{File, BufferedReader, FileReader}
 import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import org.allenai.scholar.paper_coref.{Baseline, GoldCitationDoc, BareCitation, PaperMetadata}
+import org.allenai.scholar.paper_coref._
 import cc.factorie.app.strings
+import org.allenai.scholar.paper_coref.GoldCitationDoc
 
 object ParsedPaper {
   def fromCitations(cits:Iterable[LocatedCitation]):ParsedPaper = {
@@ -78,6 +79,10 @@ object CitationMetrics extends App {
 
   val alignedPapers = citsByPaper.keySet.intersect(goldCitDocs.keySet).map(k => ParsedPaper.fromCitations(citsByPaper(k)) -> goldCitDocs(k)).toIterable
 
+  val titleStringMatchExact = {(s1:String, s2:String) => s1 == s2}
+  val titleStringMatchDowncaseTrim = {(s1:String, s2:String) => s1.trim.toLowerCase.replaceAll("""\s+""", " ") == s2.trim.toLowerCase.replaceAll("""\s+""", " ")}
+  val titleStringMatchStemmed = {(s1:String, s2:String) => Baseline.corefTitleHash(s1) == Baseline.corefTitleHash(s2)}
+
   val titleMatchExact = {(pp:ParsedPaper, gp:GoldCitationDoc) => pp.self.rawCitation.rawTitle == gp.doc.title}
   val titleMatchDowncaseTrim = {(pp:ParsedPaper, gp:GoldCitationDoc) => pp.self.rawCitation.rawTitle.trim.toLowerCase.replaceAll("""\s+""", " ") == gp.doc.title.trim.toLowerCase.replaceAll("""\s+""", " ")}
   val titleMatchStemmed = {(pp:ParsedPaper, gp:GoldCitationDoc) => Baseline.corefTitleHash(pp.self.rawCitation.rawTitle) == Baseline.corefTitleHash(gp.doc.title)}
@@ -98,6 +103,27 @@ object CitationMetrics extends App {
   println("Aligned papers without empty titles title stemmed threshold 3: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(3).tupled))
   println("Aligned papers without empty titles title stemmed threshold 4: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(4).tupled))
   println("Aligned papers without empty titles title stemmed threshold 5: " + alignedPapers.filterNot(i => emptyTitle(i._1.self)).percentWhere(titleMatchStemmedEditDistThreshold(5).tupled))
+
+
+  // a levenshtein distance-based scoring metric that is non-negative and 0 only when the strings have no chars in common
+  val scoreDistPos = {(s1:String, s2:String) => (Seq(s1.size, s2.size).max - strings.editDistance(s1, s2)).toDouble}
+
+  val citAlign = alignedPapers.map { case (pp, gp) =>
+    val sources = pp.bib.map(p => Alignable(p.rawCitation.rawTitle, p))
+    val targets = gp.citations.map(p => Alignable(p.title, p))
+    Alignment.jaggedAlign(sources, targets, scoreDistPos)
+  }
+
+  println ("After alignment, empty alignments: " + citAlign.percentWhere{case AlignResult(a, _, _) => a.isEmpty})
+
+  val citTitles = citAlign.flatMap { case AlignResult(aligned,_,_) => aligned }.map { case(lc, pm) =>
+    lc.rawCitation.rawTitle -> pm.title
+  }
+
+  println("Aligned bib citations title exact match: " + citTitles.percentWhere(titleStringMatchExact.tupled))
+  println("Aligned bib citations title downcase trim match: " + citTitles.percentWhere(titleStringMatchDowncaseTrim.tupled))
+  println("Aligned bib citations title stemmed match: " + citTitles.percentWhere(titleStringMatchStemmed.tupled))
+
 }
 
 

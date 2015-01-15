@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringEscapeUtils._
 /**
  * @author John Sullivan
  */
+case class GoldCitationDoc(doc:PaperMetadata, citations:Iterable[PaperMetadata])
 case class PaperMetadata(id: String, title: String, venue: String,
                          year: Int, authors: List[String])
 

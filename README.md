@@ -26,4 +26,15 @@ The system performs quite well on the labeled ACL data set with alignment perfor
 | MUC      | 98.230    | 81.282 | 88.956 |
 | B^3      | 97.903    | 68.101 | 80.326 |
 
-This is over a dataset with 114,654 mentions (citations/titles) across 15,475 entities (papers). (For an intuition on these metrics you might want to look [here](http://brenocon.com/blog/2013/08/probabilistic-interpretation-of-the-b3-coreference-resolution-metric/).)
+This is over a dataset with 114,654 mentions (citations/titles) across 15,475 entities (papers). Using the same extraction technique but labelling empty title string as singletons gives:
+
+
+| Metric   | Precision | Recall | F1     |
+| -------- | --------- | ------ | ------ |
+| Pairwise | 97.711    | 63.079 | 76.666 |
+| MUC      | 98.230    | 77.608 | 86.710 |
+| B^3      | 98.028    | 65.146 | 78.274 |
+
+This is over a dataset with 121,938 mentions and 18,064 entities.
+
+(For an intuition on these metrics you might want to look [here](http://brenocon.com/blog/2013/08/probabilistic-interpretation-of-the-b3-coreference-resolution-metric/).)

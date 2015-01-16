@@ -1,37 +1,6 @@
-package org.allenai.scholar.paper_coref.citations
+package org.allenai.scholar.paper_coref
 
-import java.io._
-import cc.factorie._
-import org.json4s._
-import org.json4s.jackson.JsonMethods._
-import org.allenai.scholar.paper_coref._
-import cc.factorie.app.strings
-import org.allenai.scholar.paper_coref.GoldCitationDoc
-
-object ParsedPaper {
-  def fromCitations(cits:Iterable[LocatedCitation]):ParsedPaper = {
-    assert(cits.count(_.paperId.isDefined) == 1)
-    ParsedPaper(cits.filter(_.paperId.isDefined).head, cits.filterNot(_.paperId.isDefined))
-  }
-}
-
-case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation])
-
-case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String)
-
-case class LocatedCitation(rawCitation:RawCitation, citingPaperId:Option[String], paperId:Option[String]) {
-  lazy val foundInId = citingPaperId.getOrElse(paperId.get)
-}
-
-object LocatedCitation {
-
-  implicit val formats = DefaultFormats
-
-  def fromFile(filename:String):Iterable[LocatedCitation] =
-    new BufferedReader(new FileReader(filename)).toIterator.map{ line =>
-      parse(line).extract[LocatedCitation]
-  }.toIterable
-}
+import java.io.File
 
 object CitationMetrics extends App {
   val citsDir = args(0)
@@ -133,7 +102,4 @@ object CitationMetrics extends App {
   println("Nonempty Aligned bib citations title downcase trim match: " + citTitles.filterNot(t => t._1.isEmpty || t._2.isEmpty).percentWhere(titleStringMatchDowncaseTrim.tupled))
   println("Nonempty Aligned bib citations title stemmed match: " + citTitles.filterNot(t => t._1.isEmpty || t._2.isEmpty).percentWhere(titleStringMatchStemmed.tupled))
 }
-
-
-
 

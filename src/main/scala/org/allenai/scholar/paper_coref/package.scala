@@ -1,9 +1,9 @@
-package org.allenai.scholar.paper_coref
+package org.allenai.scholar
 
 /**
  * @author John Sullivan
  */
-package object citations {
+package object paper_coref {
 
   case class Percent(num:Int, denom:Int) {
     lazy val value = (num.toDouble / denom)*100

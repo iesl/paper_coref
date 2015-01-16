@@ -51,14 +51,14 @@ object CitationMetrics extends App {
 
   val titleStringMatchExact = {(s1:String, s2:String) => s1 == s2}
   val titleStringMatchDowncaseTrim = {(s1:String, s2:String) => s1.trim.toLowerCase.replaceAll("""\s+""", " ") == s2.trim.toLowerCase.replaceAll("""\s+""", " ")}
-  val titleStringMatchStemmed = {(s1:String, s2:String) => Baseline.corefTitleHash(s1) == Baseline.corefTitleHash(s2)}
+  val titleStringMatchStemmed = {(s1:String, s2:String) => Baseline.titleHash(s1) == Baseline.titleHash(s2)}
 
   val titleMatchExact = {(pp:ParsedPaper, gp:GoldCitationDoc) => pp.self.rawCitation.rawTitle == gp.doc.title}
   val titleMatchDowncaseTrim = {(pp:ParsedPaper, gp:GoldCitationDoc) => pp.self.rawCitation.rawTitle.trim.toLowerCase.replaceAll("""\s+""", " ") == gp.doc.title.trim.toLowerCase.replaceAll("""\s+""", " ")}
-  val titleMatchStemmed = {(pp:ParsedPaper, gp:GoldCitationDoc) => Baseline.corefTitleHash(pp.self.rawCitation.rawTitle) == Baseline.corefTitleHash(gp.doc.title)}
+  val titleMatchStemmed = {(pp:ParsedPaper, gp:GoldCitationDoc) => Baseline.titleHash(pp.self.rawCitation.rawTitle) == Baseline.titleHash(gp.doc.title)}
 
   def titleMatchStemmedEditDistThreshold(threshold:Int):((ParsedPaper, GoldCitationDoc) => Boolean) = {
-    {(pp:ParsedPaper, gp:GoldCitationDoc) => strings.editDistance(Baseline.corefTitleHash(pp.self.rawCitation.rawTitle), Baseline.corefTitleHash(gp.doc.title)) < threshold}
+    {(pp:ParsedPaper, gp:GoldCitationDoc) => strings.editDistance(Baseline.titleHash(pp.self.rawCitation.rawTitle), Baseline.titleHash(gp.doc.title)) < threshold}
   }
 
   println("Aligned papers title exact match: " + alignedPapers.percentWhere(titleMatchExact.tupled))

@@ -1,6 +1,7 @@
 package org.allenai.scholar.paper_coref
 
 import java.io.File
+import cc.factorie.app.strings
 
 object CitationMetrics extends App {
   val citsDir = args(0)

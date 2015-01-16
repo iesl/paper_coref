@@ -24,8 +24,10 @@ object LocatedCitation {
 
   implicit val formats = DefaultFormats
 
-  def fromFile(filename:String):Iterable[LocatedCitation] =
-    new BufferedReader(new FileReader(filename)).toIterator.map{ line =>
+  def fromInputStream(is:InputStream):Iterable[LocatedCitation] =
+    new BufferedReader(new InputStreamReader(is)).toIterator.map{ line =>
       parse(line).extract[LocatedCitation]
   }.toIterable
+
+  def fromFile(filename:String):Iterable[LocatedCitation] = fromInputStream(new FileInputStream(filename))
 }

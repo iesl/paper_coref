@@ -11,16 +11,19 @@ import org.json4s._
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.Serialization.{read, write}
 
-/**
- * @author John Sullivan
- */
+trait PaperCoref {
+  def performCoref(mentions:Iterable[PaperMention]):Iterable[Iterable[PaperMention]]
+}
 
-object Baseline {
+object Baseline extends PaperCoref {
 
   val fieldSep = Character.toString(31.toChar)
   def corefTitleHash(rawTitle:String):String =
     DeterministicTokenizer.process(new Document(rawTitle))
       .tokens.filterNot(_.isPunctuation).map(t => strings.porterStem(t.string.toLowerCase)).mkString(fieldSep)
+
+
+  def performCoref(mentions: Iterable[PaperMention]) = mentions.groupBy(m => if(m.title.nonEmpty) corefTitleHash(m.title) else m.id).values
 
   def main(args:Array[String]) {
 
@@ -78,3 +81,4 @@ object PaperMention {
     }
   }
 }
+

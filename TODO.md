@@ -8,7 +8,13 @@ __June 30:__ Port current citation coreference to work with arbitrary extraction
 
 __June 1.__ Run 3 processors on ACL Corpus
 
+- Grobid. _Complete._ Few error cases outstanding.
+- ParsCit. _Set up._ Input format still under investigation
+- RPP. _In progress_. Running iesl-pdf-to-text on ACL. TODO: Parallel run of iesl-pdf-to-text, start runs of RPP.
+
 __June 1.__ Draft of universal paper reference data structure format
+
+- _In progress_. Considering use of JSON4S for serialization. 
 
 __June 4.__ Pick ~12 documents for debugging the pdf extraction output, reconsider universal format
 

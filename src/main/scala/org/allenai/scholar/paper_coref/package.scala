@@ -1,5 +1,7 @@
 package org.allenai.scholar
 
+import java.io.File
+
 import cc.factorie.util.BasicEvaluatableClustering
 
 /**
@@ -23,6 +25,18 @@ package object paper_coref {
   implicit class PaperMentionIterableExtras(pms:Iterable[Iterable[PaperMention]]) {
     def predictedClustering = new BasicEvaluatableClustering(pms.zipWithIndex.flatMap{case (cluster, idx) => cluster.map(_.id -> idx.toString)})
     def trueClustering = new BasicEvaluatableClustering(pms.flatten.map(m => m.id -> m.trueLabel))
+  }
+  
+  implicit class FileExtras(file: File) {
+    def getNameWithoutExtension = {
+      val split = file.getName.split("\\.")
+      if (split.length == 1)
+        split(0)
+      else
+        split.slice(1,split.length-1).mkString("")
+        
+    }
+
   }
 
 }

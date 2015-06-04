@@ -12,12 +12,19 @@ object ParsedPaper {
   }
 }
 
-case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation])
+case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation]) {
+  override def toString = s"(ParsedPaper(${self.paperId.getOrElse("UnknownId")}), self: ${self.toString}, bib: ${bib.map(_.toString).mkString(", ")})"
+}
 
-case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String)
+case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String) {
+  override def toString = s"(RawCitation, rawTitle: $rawTitle, rawAuthors: ${rawAuthors.mkString(", ")}, date: $date)"
+  def isEmpty: Boolean = rawTitle.isEmpty && rawAuthors.isEmpty && date.isEmpty 
+}
 
 case class LocatedCitation(rawCitation:RawCitation, citingPaperId:Option[String], paperId:Option[String]) {
   lazy val foundInId = citingPaperId.getOrElse(paperId.get)
+  override def toString = s"(LocatedCitation, rawCitation:${rawCitation.toString}, citingPaperId: $citingPaperId, paperId: $paperId)"
+  def isEmpty: Boolean = rawCitation.isEmpty
 }
 
 object LocatedCitation {

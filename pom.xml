@@ -5,7 +5,7 @@
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2015</inceptionYear>
   <properties>
-    <scala.majorVersion>2.10</scala.majorVersion>
+    <scala.majorVersion>2.11</scala.majorVersion>
     <scala.minorVersion>.4</scala.minorVersion>
   </properties>
 

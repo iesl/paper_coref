@@ -14,9 +14,15 @@ __June 1.__ Run 3 processors on ACL Corpus (see below)
 
 __June 1.__ Draft of universal paper reference data structure format
 
-- _In progress_. Writing loaders of the XML output of each of the processors
+- _In progress_. Writing loaders of the XML output of each of the processors. Rather than defining a new data structure format, I am for the time being writing loaders, which convert the XML output into the ```RawCitation```,```LocatedCitation```, and ```ParsedPaper``` data structures that already exist in this project. See ```LoadGrobid```.
 
 __June 4.__ Pick ~12 documents for debugging the pdf extraction output, reconsider universal format
+
+- A set of documents for debugging purposes are available here: 
+```
+/iesl/canvas/nmonath/grant_work/ai2/data/acl-debug-set
+```
+- RE: universal format -- writing loaders to convert xml output to Jack's existing data structures.
 
 __June 12.__ Finalize Universal Format
 
@@ -33,7 +39,7 @@ __June 17.__ First evaluation report
 
 - __Grobid.__ Ran the three modes of interest on the ACL corpus, full text processing, header processing, and reference section processing. There were some error cases other than the ones that occurred with __pdftotext__. Additionally, the encoding of the compute nodes is ```iso-8859-1```; I would like to investigate if we could instead use ```UTF-8```.
 - __ParsCit.__ After a slightly complicated set up process, ParsCit runs on blake. See the _doc_ directory for more info on the installation. Currently using __pdftotext__ to generate the plain text input to __ParsCit__. However, I need to talk to our folks here about using __iesl-pdf-to-text__ to generate input or the AI2 folks about what they use.
--__RPP.__ I've run into issues using this. I think I have not set it up properly. I am trying currently to resolve these. 
+- __RPP.__ I've run into issues using this. I think I have not set it up properly. I am trying currently to resolve these. 
 
 ##4. Notes##
 

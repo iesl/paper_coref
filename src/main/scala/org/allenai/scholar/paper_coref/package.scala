@@ -33,8 +33,7 @@ package object paper_coref {
       if (split.length == 1)
         split(0)
       else
-        split.slice(1,split.length-1).mkString("")
-        
+        split.slice(0,1).mkString("")
     }
 
   }

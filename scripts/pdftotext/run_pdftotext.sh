@@ -6,7 +6,7 @@ outputdir=${2:-"/iesl/canvas/nmonath/grant_work/ai2/data/pdftotext-acl-processed
 echo "==========================================================================="
 echo "[citation_coref] Running pdftotext (Linux)"
 echo "[citation_coref] Input Directory: $inputdir"
-echo "[citation_coref] Output Directory: $outputDir"
+echo "[citation_coref] Output Directory: $outputdir"
 
 START=$(date +%s)
 for filename in $inputdir/*.pdf; do

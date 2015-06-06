@@ -1,37 +1,42 @@
 package org.allenai.scholar.paper_coref.load
 
-import org.allenai.scholar.paper_coref.RawCitation
+import org.allenai.scholar.paper_coref.{RawCitation,StringExtras}
 
 import scala.xml.{Elem, NodeSeq}
 
 object LoadParsCit extends XMLLoader{
 
   def loadHeader(xml: Elem): Option[RawCitation] = {
-    val maybeTitleIndex = (xml \\ "algorithm").map((p) => p  \\ "title").zipWithIndex.dropWhile(_._1.isEmpty).headOption
-    if (maybeTitleIndex.isDefined) {
-      val titleIndex = maybeTitleIndex.get._2
-      val title = (xml \\ "algorithm").map((p) => p \\ "title").drop(titleIndex).map(_.head).head.text // Take the first title listed of the first algorithm block which contains a title.
-      val authors = (xml \\ "algorithm").map((p) => (p \\ "author").map(_.text)).drop(titleIndex).head // Take all of the authors listed in the algorithm block containing the title
-      val maybeDate = (xml \\ "algorithm").map((p) => p \\ "date").drop(titleIndex).flatMap(_.headOption).headOption // Take the date from the block that contains the author and title
-      val date = if (maybeDate.isDefined) maybeDate.get.text else ""
-      val citation = RawCitation(title, authors.toList, date)
-      if (citation.isEmpty) None else Some(citation)
-    } else
-      None
+
+    val nonCitations = (xml \\ "algorithm").filter((p) => (p \\ "citationList").isEmpty)
+    val title = mostConfidentValue(nonCitations, "title").getOrElse("")
+    val authors = mostConfidentValues(nonCitations, "author")
+    val date = mostConfidentValue(nonCitations, "date").getOrElse("")
+    val citation = RawCitation(title.removeNewlines, authors.map(_.removeNewlines).toList, date.removeNewlines)
+    if (citation.isEmpty) None else Some(citation)
   }
   
   def loadReferences(xml: Elem): Iterable[RawCitation] =
     (xml \\ "algorithm" \\ "citationList" \\ "citation").flatMap(loadReference)
 
-  
   def loadReference(xml: NodeSeq): Option[RawCitation] = {
-    val maybeTitle = (xml  \\ "title").headOption
-    val authors = (xml \\ "author").map(_.text)
-    val maybeDate = (xml \\ "date").headOption
-    val title = if (maybeTitle.isDefined) maybeTitle.get.text else ""
-    val date = if (maybeDate.isDefined) maybeDate.get.text else ""
-    val citation = RawCitation(title,authors.toList,date)
+    val title = mostConfidentValue(xml, "title").getOrElse("")
+    val authors = mostConfidentValues(xml, "author")
+    val date = mostConfidentValue(xml, "date").getOrElse("")
+    val citation = RawCitation(title.removeNewlines, authors.map(_.removeNewlines).toList, date.removeNewlines)
     if (citation.isEmpty) None else Some(citation)
+  }
+  
+  def mostConfidentValue(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
+   valuesWithConfidence(xml,field,confidenceFieldName,defaultValue).sortBy(-_._2).map(_._1).headOption
+
+  def valuesWithConfidence(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
+    (xml \\ field).map((p) => (p.text.trim, (p \\ confidenceFieldName).map(_.text).headOption.getOrElse(defaultValue).toDouble))
+  
+  def mostConfidentValues(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") = {
+    val confidentValues = valuesWithConfidence(xml,field,confidenceFieldName,defaultValue)
+    val maxConfidence = confidentValues.map(_._2).headOption.getOrElse(0.0)
+    confidentValues.filter(_._2 == maxConfidence).map(_._1)
   }
 
 }

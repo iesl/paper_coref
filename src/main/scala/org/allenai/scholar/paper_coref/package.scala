@@ -35,7 +35,11 @@ package object paper_coref {
       else
         split.slice(0,1).mkString("")
     }
+  }
 
+  implicit class StringExtras(string: String) {
+    def removeNewlines =
+      string.replaceAll("\n|\r","")
   }
 
 }

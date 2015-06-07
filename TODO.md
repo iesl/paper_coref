@@ -24,6 +24,8 @@ __June 4.__ Pick ~12 documents for debugging the pdf extraction output, reconsid
 ```
 - RE: universal format -- writing loaders to convert xml output to Jack's existing data structures.
 
+__June 8.__ Formalize the schema mapping problem. Provide examples. Get scores for at least 1 of the processors. 
+
 __June 12.__ Finalize Universal Format
 
 __June 17.__ First evaluation report

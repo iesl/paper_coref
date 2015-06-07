@@ -35,7 +35,7 @@ trait XMLLoader {
     val xml = XML.load(new InputStreamReader(new FileInputStream(file), codec))
     val paperId = file.getNameWithoutExtension
     val headerCitation = loadHeader(xml).map(LocatedCitation(_, None, Some(paperId)))
-    val bib = loadReferences(xml).map(LocatedCitation(_,None,None))
+    val bib = loadReferences(xml).map(LocatedCitation(_,Some(paperId),None))
     if (headerCitation.isDefined)
       Some(ParsedPaper.fromCitations(bib ++ Iterable(headerCitation.get)))
     else
@@ -46,7 +46,7 @@ trait XMLLoader {
     assert(headerFile.getNameWithoutExtension == referencesFile.getNameWithoutExtension)
     val paperId = headerFile.getNameWithoutExtension
     val headerCitation = loadHeader(XML.load(new InputStreamReader(new FileInputStream(headerFile), codec))).map(LocatedCitation(_, None, Some(paperId)))
-    val bib = loadReferences(XML.load(new InputStreamReader(new FileInputStream(referencesFile), codec))).map(LocatedCitation(_,None,None))
+    val bib = loadReferences(XML.load(new InputStreamReader(new FileInputStream(referencesFile), codec))).map(LocatedCitation(_,Some(paperId),None))
     if (headerCitation.isDefined)
       Some(ParsedPaper.fromCitations(bib ++ Iterable(headerCitation.get)))
     else

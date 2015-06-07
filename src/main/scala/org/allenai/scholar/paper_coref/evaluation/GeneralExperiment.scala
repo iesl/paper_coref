@@ -4,7 +4,7 @@ import java.io.File
 
 import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
-import org.allenai.scholar.paper_coref.load.{LoadParsCit, XMLLoader}
+import org.allenai.scholar.paper_coref.load.{LoadGrobid, LoadParsCit, XMLLoader}
 
 // TODO: Make this interface nicer
 class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMetaData: String, goldCitations: String) extends ExperimentRunner {
@@ -61,6 +61,8 @@ class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMe
   }
 }
 
+
+// TODO: set these up w/o hard coding.
 object ParscitTest {
   
   def main(args: Array[String]): Unit = {
@@ -71,4 +73,17 @@ object ParscitTest {
     exp.run()
   }
   
+}
+
+
+object GrobidTest {
+
+  def main(args: Array[String]): Unit = {
+    val grobidFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/grobid-acl-processed/full-text").listFiles().filter(_.getName.endsWith(".xml"))
+    val goldMetaData = "metadata"
+    val goldCitations = "citation-edges"
+    val exp = new GeneralExperiment(LoadGrobid,grobidFiles,goldMetaData,goldCitations)
+    exp.run()
+  }
+
 }

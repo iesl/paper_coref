@@ -9,7 +9,14 @@ __June 30:__ Port current citation coreference to work with arbitrary extraction
 __June 1.__ Run 3 processors on ACL Corpus (see below)
 
 - Grobid. _Complete._ Few error cases outstanding.
-- ParsCit. _Running Now_. Notes: Input format is plain text. For initial run used Linux utility pdftotext to convert pdfs to text.
+  - Error for the _full text extraction_ is: 
+  ```
+  warning: missing tokens, cannot apply pattern
+  warning: Cannot apply patterns, most likely wrong input data
+  ```
+  - There are some corrupt files that cause this (e.g. html & postscript). See __pdftotext__ below for more info on these.
+  - The other PDFs causing this error (it's not really a warning it seems)  do not have any obvious sign of problems. (all of the files are located here: ```/iesl/canvas/nmonath/grant_work/ai2/data/acl-grobid-full-text-errors```)
+- ParsCit. _Complete_. Notes: Input format is plain text. For initial run used Linux utility pdftotext to convert pdfs to text.
 - RPP. _In progress_. Running iesl-pdf-to-text on ACL. Issues running RPP still being sorted out.
 
 __June 1.__ Draft of universal paper reference data structure format
@@ -35,7 +42,9 @@ __June 17.__ First evaluation report
 ### 3.1 PDF to Text or SVG ###
 
 - __pdftotext (linux utility).__ Ran this on the ACL corpus. Found error cases on the following documents: L08-1004,L08-1005,L08-1006,L08-1007,L08-1008,L08-1009,P03-1024,P03-2004,W03-1613,W04-1102,W96-0007. These documents are either html pages saying that the requested document could not be processed, postscript documents, or pdf documents which the utility says is corrupted. 
-- __iesl-pdf-to-text.__ Running this on the ACL corpus. It is quite slow since it doesn't have a batch mode. I have set up code to distribute the work across the cluster, but haven't had a chance to launch these jobs. In the meantime, a serial processing of the corpus is running. 
+  - I have the __pdftotext__ processed corpus here: ```/iesl/canvas/nmonath/grant_work/ai2/data/pdftotext-acl-processed```
+- __iesl-pdf-to-text.__ Ran this on the ACL corpus. It is quite slow since it doesn't have a batch mode. While I originally ran this in a serial fashion, there is now some code set up to run in a distributed way. 
+  - I have the __iesl-pdf-to-text__ processed here: ```/iesl/canvas/nmonath/grant_work/ai2/data/iesl-pdf-to-text-acl-processed```
 
 ### 3.2 Document Processors ###
 
@@ -43,7 +52,17 @@ __June 17.__ First evaluation report
 - __ParsCit.__ After a slightly complicated set up process, ParsCit runs on blake. See the _doc_ directory for more info on the installation. Currently using __pdftotext__ to generate the plain text input to __ParsCit__. However, I need to talk to our folks here about using __iesl-pdf-to-text__ to generate input or the AI2 folks about what they use.
 - __RPP.__ I've run into issues using this. I think I have not set it up properly. I am trying currently to resolve these. 
 
-##4. Notes##
+##4. Coreference Results##
+
+- Initial run with current, not-so sophisticated schema mapping, gives: 
+
+
+| Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
+| ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
+"Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
+"AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
+
+##5. Notes##
 
 * Current plan is to run each processor and provide loader for each output format. Alternatively we could provide support to run each of the different systems from inside the project. 
 

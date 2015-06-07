@@ -27,6 +27,8 @@ echo java -Xmx$memory -jar $jarpath \
 echo ""
 echo ""
 
+mkdir -p $outputDir
+
 START=$(date +%s)
 
 java -Xmx$memory -jar $jarpath \

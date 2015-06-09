@@ -33,6 +33,9 @@ __June 4.__ Pick ~12 documents for debugging the pdf extraction output, reconsid
 
 __June 8.__ Formalize the schema mapping problem. Provide examples. Get scores for at least 1 of the processors. 
 
+- Formalization still needs work
+- See below for scores for ParsCit & Grobid
+
 __June 12.__ Finalize Universal Format
 
 __June 17.__ First evaluation report
@@ -59,6 +62,7 @@ __June 17.__ First evaluation report
 
 | Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
 | ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
+??? | Ai2 Parscit | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
 "Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
 "AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
 "Baseline" | Grobid | 97.847 | 71.343 | 82.519 | 95.801 | 82.752 | 88.800 | 95.468 | 72.275 | 82.268 |

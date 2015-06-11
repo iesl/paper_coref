@@ -8,9 +8,9 @@ object LoadGrobid extends XMLLoader{
 
   def loadHeader(xml: Elem): Option[RawCitation] = {
     val header = xml \ "teiHeader"
-    val title = (header \\ "titleStmt" \\ "title").text
+    val title = (header \\ "titleStmt" \\ "title").map(_.text).headOption.getOrElse("")
     val authors = getAuthors(header)
-    val date = (header \\ "publicationStmt"  \\ "date").text // TODO: There seems to be several options here. Grobid even seems to do some cleaning of this field in other places.
+    val date = (header \\ "publicationStmt"  \\ "date").map(_.text).headOption.getOrElse("") // TODO: There seems to be several options here. Grobid even seems to do some cleaning of this field in other places.
     val citation = RawCitation(title,authors.toList,date)
     if (citation.isEmpty) None else Some(citation)
   }

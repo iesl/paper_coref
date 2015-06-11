@@ -75,3 +75,18 @@ __June 17.__ First evaluation report
 * In deciding on a data structure format for paper citations, we could use an existing format such as Grobid's format or RPP's format. We want to try not to lose information in converting from the PDF processor's output to the data structure, while keeping the data structure general enough for arbitrarily extracted citations.
 
 * We also want to have a data structure format that is easily serializable and deserializable. Candidates might include JSON based formats which would fit nicely with cubbies and Mongo.  
+
+##6. General TODO ##
+
+- Investigate the malformed XML errors present in the output of Grobid and Parscit
+- Continue to work on setting up and getting results for RPP
+- Results using Rexa MetaTagger?
+- Study coreference procedure.
+- Continue to document the schema mapping
+- More details on the extractions that Jack had been using. 
+- More general schema mapping? Needs interface other than API?
+- Load metadata from JSON
+- Investigate any errors remaining from PDF processing
+- Test the parallelized iesl-pdf-to-text
+- Gather time statistics for coreference code.
+- Set up nicer experiment interface

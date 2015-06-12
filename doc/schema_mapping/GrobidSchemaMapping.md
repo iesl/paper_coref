@@ -1,7 +1,6 @@
 # Grobid Schema Mapping #
 
-
-## Grobid Schema ## 
+## Grobid Schema ##
 
 - Generally Grobid follows the TEI-C specifications: http://www.tei-c.org/Guidelines/P5/
 - The specific Grobid Schema is here: https://github.com/kermitt2/grobid/blob/master/grobid-home/schemas/doc/Grobid_doc.html

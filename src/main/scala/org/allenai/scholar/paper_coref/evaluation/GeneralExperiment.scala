@@ -4,7 +4,9 @@ import java.io.File
 
 import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
-import org.allenai.scholar.paper_coref.load.{LoadGrobid, LoadParsCit, XMLLoader}
+import org.allenai.scholar.paper_coref.load.{LoadRPP, LoadGrobid, LoadParsCit, XMLLoader}
+
+import scala.io.Source
 
 // TODO: Make this interface nicer
 class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMetaData: String, goldCitations: String) extends ExperimentRunner {
@@ -23,12 +25,18 @@ class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMe
     val pms = PaperMetadata.fromFile(goldMetaData)
     println("[GeneralExperiment] Done loading paper metadata")
     println("[GeneralExperiment] Loading gold citations")
+    // pairs of (from -> to) paper citations (a -> b) a cites b
     val bcs = BareCitation.fromFile(goldCitations)
     println("[GeneralExperiment] Done loading gold citations")
     println("[GeneralExperiment] Creating pmMap")
+    // Map from paper id to meta data
     val pmMap = pms.map(p => p.id -> p).toMap
     println("[GeneralExperiment] Done creating pmMap")
     println("[GeneralExperiment] Finalizing gold map.")
+    
+    // take each paper's group of references and create a pair (this paper's metadata, meta data of this paper's citations)
+    // create map from id to this info
+    
     bcs.groupBy(_.from).flatMap{ case (k, vs) =>
       pmMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => pmMap.get(v.to))))
     }.map(g => g.doc.id -> g).toMap
@@ -46,7 +54,7 @@ class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMe
   override def run() {
     println("[GeneralExperiment] Running Experiment")
     corefs foreach { c =>
-      println(s"[GeneralExperiment] Running Coref: ${c.getClass.getName.toString}")
+      println(s"[GeneralExperiment] Running Coref: ${c.getClass.getName}")
       val res = c.performCoref(mentions)
       println(s"[GeneralExperiment] Finished performing coreference.")
       println("[GeneralExperiment] Creating gold clustering.")
@@ -66,7 +74,8 @@ class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMe
 object ParscitTest {
   
   def main(args: Array[String]): Unit = {
-    val parscitFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/parscit-acl-processed/extract_all").listFiles().filter(_.getName.endsWith(".xml"))
+    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
+    val parscitFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/parscit-acl-processed/extract_all").listFiles().filter((f) => f.getName.endsWith(".xml") && aclIds.contains(f.getNameWithoutExtension))
     val goldMetaData = "metadata"
     val goldCitations = "citation-edges"
     val exp = new GeneralExperiment(LoadParsCit,parscitFiles,goldMetaData,goldCitations)
@@ -79,10 +88,24 @@ object ParscitTest {
 object GrobidTest {
 
   def main(args: Array[String]): Unit = {
-    val grobidFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/grobid-acl-processed/full-text").listFiles().filter(_.getName.endsWith(".xml"))
+    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
+    val grobidFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/grobid-acl-processed/full-text").listFiles().filter( (f) => f.getName.endsWith(".xml") && aclIds.contains(f.getNameWithoutExtension))
     val goldMetaData = "metadata"
     val goldCitations = "citation-edges"
     val exp = new GeneralExperiment(LoadGrobid,grobidFiles,goldMetaData,goldCitations)
+    exp.run()
+  }
+
+}
+
+object RPPTest {
+
+  def main(args: Array[String]): Unit = {
+    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
+    val rppFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data//rpp-processed-output/").listFiles().filter( (f) => f.getName.endsWith(".tagged") && aclIds.contains(f.getNameWithoutExtension))
+    val goldMetaData = "data/metadata"
+    val goldCitations = "data/citation-edges"
+    val exp = new GeneralExperiment(LoadRPP,rppFiles,goldMetaData,goldCitations)
     exp.run()
   }
 

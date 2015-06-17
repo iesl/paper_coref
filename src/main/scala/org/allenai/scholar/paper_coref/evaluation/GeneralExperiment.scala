@@ -5,6 +5,7 @@ import java.io.{BufferedReader, File, FileReader, PrintWriter}
 import cc.factorie._
 import cc.factorie.util.{DefaultCmdOptions, EvaluatableClustering}
 import org.allenai.scholar.paper_coref._
+import org.allenai.scholar.paper_coref.coreference.PaperCoref
 import org.allenai.scholar.paper_coref.load._
 
 class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) {

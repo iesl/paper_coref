@@ -3,6 +3,7 @@ package org.allenai.scholar.paper_coref
 import java.io.File
 
 import cc.factorie.app.strings
+import org.allenai.scholar.paper_coref.coreference.Baseline
 
 object CitationMetrics extends App {
  printStatistics(args(0))

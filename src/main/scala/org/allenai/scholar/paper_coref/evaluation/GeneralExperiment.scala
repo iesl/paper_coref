@@ -4,12 +4,12 @@ import java.io.File
 
 import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
-import org.allenai.scholar.paper_coref.load.{LoadRPP, LoadGrobid, LoadParsCit, XMLLoader}
+import org.allenai.scholar.paper_coref.load._
 
 import scala.io.Source
 
 // TODO: Make this interface nicer
-class GeneralExperiment(loader: XMLLoader, citationFiles: Iterable[File], goldMetaData: String, goldCitations: String) extends ExperimentRunner {
+class GeneralExperiment(loader: Loader, citationFiles: Iterable[File], goldMetaData: String, goldCitations: String) extends ExperimentRunner {
 
   println(s"[GeneralExperiment] Loading citations from ${citationFiles.size} files.")
   val parsedPapers = loader.fromFiles(citationFiles)

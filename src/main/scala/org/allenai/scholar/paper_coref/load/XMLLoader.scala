@@ -1,35 +1,12 @@
 package org.allenai.scholar.paper_coref.load
 
-import java.io.{FileInputStream, InputStreamReader, File}
+import java.io.{File, FileInputStream, InputStreamReader}
 
-import org.allenai.scholar.paper_coref.{RawCitation, LocatedCitation, ParsedPaper, FileExtras}
+import org.allenai.scholar.paper_coref.{FileExtras, LocatedCitation, ParsedPaper, RawCitation}
 
-import scala.collection.mutable.ArrayBuffer
-import scala.xml.{NodeSeq, Elem, XML}
+import scala.xml.{Elem, NodeSeq, XML}
 
-trait XMLLoader {
-
-  def fromDir(dir: File, codec: String = "ISO-8859-1", fileFilter: File => Boolean = _ => true): Iterable[ParsedPaper] = dir.listFiles().filter(fileFilter).flatMap(fromFile(_,codec))
-
-  def fromFiles(files: Iterable[File], codec: String = "ISO-8859-1"): Iterable[ParsedPaper] = {
-     val numFiles = files.size
-    val errors = new ArrayBuffer[String]()
-     val res = files.zipWithIndex.flatMap{case (p,idx) =>
-        print(s"\r[XMLLoader] Loading from ${p.getName} (Loaded: ${idx+1}/$numFiles, Num Errors: ${errors.length}).")
-        try {
-          fromFile(p,codec)
-        } catch {
-          case e: Exception =>
-            errors += p.getName
-            println(" ERROR: " + e.getMessage)
-            None
-        }
-      }
-    println()
-    res
-  }
-  
-  def fromFilename(filename:String, codec: String = "ISO-8859-1"): Option[ParsedPaper] = fromFile(new File(filename),codec)
+trait XMLLoader extends Loader {
 
   def fromFile(file: File, codec: String = "ISO-8859-1"): Option[ParsedPaper] = {
     val xml = XML.load(new InputStreamReader(new FileInputStream(file), codec))

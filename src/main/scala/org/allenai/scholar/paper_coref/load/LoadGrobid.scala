@@ -5,6 +5,8 @@ import org.allenai.scholar.paper_coref.RawCitation
 import scala.xml.{Elem, NodeSeq}
 
 object LoadGrobid extends XMLLoader{
+  
+  val formatType = Grobid
 
   def loadHeader(xml: Elem): Option[RawCitation] = {
     val header = xml \ "teiHeader"

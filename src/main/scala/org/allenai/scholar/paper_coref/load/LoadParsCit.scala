@@ -6,6 +6,8 @@ import scala.xml.{Elem, NodeSeq}
 
 object LoadParsCit extends XMLLoader{
 
+  val formatType = ParsCit
+  
   def loadHeader(xml: Elem): Option[RawCitation] = {
 
     val nonCitations = (xml \\ "algorithm").filter((p) => (p \\ "citationList").isEmpty)

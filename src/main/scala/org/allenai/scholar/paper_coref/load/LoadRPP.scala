@@ -5,6 +5,9 @@ import org.allenai.scholar.paper_coref.RawCitation
 import scala.xml.{Elem, NodeSeq}
 
 object LoadRPP extends XMLLoader{
+  
+  val formatType = RPP
+  
   override def loadHeader(xml: Elem): Option[RawCitation] = {
     val header = xml \\ "header"
     val title = (header \\ "title").map(_.text).headOption.getOrElse("") // The first appearance of a title or else empty

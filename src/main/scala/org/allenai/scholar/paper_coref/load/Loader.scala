@@ -7,6 +7,9 @@ import org.allenai.scholar.paper_coref.ParsedPaper
 import scala.collection.mutable.ArrayBuffer
 
 trait Loader {
+  
+  val formatType: FormatType
+  
   def fromDir(dir: File, codec: String = "ISO-8859-1", fileFilter: File => Boolean = _ => true): Iterable[ParsedPaper] = dir.listFiles().filter(fileFilter).flatMap(fromFile(_,codec))
 
   def fromFiles(files: Iterable[File], codec: String = "ISO-8859-1"): Iterable[ParsedPaper] = {
@@ -33,4 +36,11 @@ trait Loader {
 
   def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String = "ISO-8859-1"): Option[ParsedPaper]
 
+}
+
+
+object Loader {
+  private val allLoaders = Iterable(LoadGrobid,LoadParsCit,LoadRPP).map((ldr) => ldr.formatType -> ldr).toMap[FormatType,Loader]
+  def apply(formatType: FormatType) = allLoaders(formatType)
+  def apply(string: String) = allLoaders(FormatType(string))
 }

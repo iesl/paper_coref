@@ -1,112 +1,93 @@
 package org.allenai.scholar.paper_coref.evaluation
 
-import java.io.File
+import java.io.{BufferedReader, File, FileReader, PrintWriter}
 
-import cc.factorie.util.EvaluatableClustering
+import cc.factorie._
+import cc.factorie.util.{DefaultCmdOptions, EvaluatableClustering}
 import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.load._
 
-import scala.io.Source
+class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) {
 
-// TODO: Make this interface nicer
-class GeneralExperiment(loader: Loader, citationFiles: Iterable[File], goldMetaData: String, goldCitations: String) extends ExperimentRunner {
-
-  println(s"[GeneralExperiment] Loading citations from ${citationFiles.size} files.")
-  val parsedPapers = loader.fromFiles(citationFiles)
-  println(s"[GeneralExperiment] Done Loading citations.")
-  
-  println(s"[GeneralExperiment] Creating citation map")
-  val citsMap = parsedPapers.groupBy(_.self.foundInId).mapValues(_.head)
-  println(s"[GeneralExperiment] Done creating citation map")
-  
-  println("[GeneralExperiment] Loading gold citations")
-  val goldCitDocs = {
-    println("[GeneralExperiment] Loading Paper Metadata")
-    val pms = PaperMetadata.fromFile(goldMetaData)
-    println("[GeneralExperiment] Done loading paper metadata")
-    println("[GeneralExperiment] Loading gold citations")
-    // pairs of (from -> to) paper citations (a -> b) a cites b
-    val bcs = BareCitation.fromFile(goldCitations)
-    println("[GeneralExperiment] Done loading gold citations")
-    println("[GeneralExperiment] Creating pmMap")
-    // Map from paper id to meta data
-    val pmMap = pms.map(p => p.id -> p).toMap
-    println("[GeneralExperiment] Done creating pmMap")
-    println("[GeneralExperiment] Finalizing gold map.")
-    
-    // take each paper's group of references and create a pair (this paper's metadata, meta data of this paper's citations)
-    // create map from id to this info
-    
-    bcs.groupBy(_.from).flatMap{ case (k, vs) =>
-      pmMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => pmMap.get(v.to))))
-    }.map(g => g.doc.id -> g).toMap
-  }
-  println(s"[GeneralExperiment] done loading gold citations")
-
-
-  lazy val mentions = {
-    println("[GeneralExperiment] Creating paper mentions.")
-    val res = PaperMention.generate(citsMap, goldCitDocs)
-    println("[GeneralExperiment] Done creating paper mentions.")
-    res
-  }
-  lazy val corefs = Seq(Baseline, AlphaOnly)
-  override def run() {
-    println("[GeneralExperiment] Running Experiment")
-    corefs foreach { c =>
-      println(s"[GeneralExperiment] Running Coref: ${c.getClass.getName}")
+  def run() = {
+    println("[PaperCoreferenceExperiment] Running Experiment")
+    corefs map { c =>
+      println(s"[PaperCoreferenceExperiment] Running Coref: ${c.name}")
       val res = c.performCoref(mentions)
-      println(s"[GeneralExperiment] Finished performing coreference.")
-      println("[GeneralExperiment] Creating gold clustering.")
+      println(s"[PaperCoreferenceExperiment] Finished performing coreference.")
+      println("[PaperCoreferenceExperiment] Creating gold clustering.")
       val gold = res.trueClustering
-      println("[GeneralExperiment] Done creating gold clustering.")
-      println("[GeneralExperiment] Creating predicted clustering.")
+      println("[PaperCoreferenceExperiment] Done creating gold clustering.")
+      println("[PaperCoreferenceExperiment] Creating predicted clustering.")
       val pred = res.predictedClustering
-      println("[GeneralExperiment] Done creating predicted clustering.")
-      println("[GeneralExperiment] Results for: " + c.getClass.getName)
-      println(EvaluatableClustering.evaluationString(pred, gold))
+      println("[PaperCoreferenceExperiment] Done creating predicted clustering.")
+      println(s"[PaperCoreferenceExperiment] Results for: ${c.name}")
+      val resultString = EvaluatableClustering.evaluationString(pred, gold)
+      println(resultString)
+      (c.name, resultString)
     }
   }
-}
-
-
-// TODO: set these up w/o hard coding.
-object ParscitTest {
   
-  def main(args: Array[String]): Unit = {
-    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
-    val parscitFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/parscit-acl-processed/extract_all").listFiles().filter((f) => f.getName.endsWith(".xml") && aclIds.contains(f.getNameWithoutExtension))
-    val goldMetaData = "metadata"
-    val goldCitations = "citation-edges"
-    val exp = new GeneralExperiment(LoadParsCit,parscitFiles,goldMetaData,goldCitations)
-    exp.run()
+  
+  def this(citationMap: Map[String,ParsedPaper], goldCitationDocumentMap: Map[String, GoldCitationDoc], corefs: Iterable[PaperCoref]) = 
+    this(PaperMention.generate(citationMap, goldCitationDocumentMap),corefs)
+  
+  def this(parsedPapers: Iterable[ParsedPaper], goldPaperMetaData: Iterable[PaperMetadata], goldCitationEdges: Iterable[BareCitation], corefs: Iterable[PaperCoref]) = 
+    this(parsedPapers.groupBy(_.self.foundInId).mapValues(_.head),
+    {
+      val pmMap = goldPaperMetaData.map(p => p.id -> p).toMap
+      // take each paper's group of references and create a pair (this paper's metadata, meta data of this paper's citations)
+      // create map from id to this info
+      goldCitationEdges.groupBy(_.from).flatMap{ case (k, vs) =>
+        pmMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => pmMap.get(v.to))))
+      }.map(g => g.doc.id -> g).toMap
+    },
+    corefs)  
+  
+  def this(loader: Loader, citationFiles: Iterable[File], goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
+    this(loader.fromFiles(citationFiles),PaperMetadata.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
   
 }
 
 
-object GrobidTest {
 
-  def main(args: Array[String]): Unit = {
-    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
-    val grobidFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data/grobid-acl-processed/full-text").listFiles().filter( (f) => f.getName.endsWith(".xml") && aclIds.contains(f.getNameWithoutExtension))
-    val goldMetaData = "metadata"
-    val goldCitations = "citation-edges"
-    val exp = new GeneralExperiment(LoadGrobid,grobidFiles,goldMetaData,goldCitations)
-    exp.run()
-  }
-
+class PaperCoreferenceExperimentOpts extends DefaultCmdOptions {
+  val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
+  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val output = new CmdOption[String]("output", "A file to write the output to (optional)", false)
+  val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
+  val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
+  val corefAlgorithms = new CmdOption[List[String]]("coref-algorithms", "The names of the coref algorithms to use",true)
 }
 
-object RPPTest {
+object PaperCoreferenceExperiment {
 
   def main(args: Array[String]): Unit = {
-    val aclIds = Source.fromFile("data/acl_paper_ids.txt").getLines().toSet[String]
-    val rppFiles = new File("/iesl/canvas/nmonath/grant_work/ai2/data//rpp-processed-output/").listFiles().filter( (f) => f.getName.endsWith(".tagged") && aclIds.contains(f.getNameWithoutExtension))
-    val goldMetaData = "data/metadata"
-    val goldCitations = "data/citation-edges"
-    val exp = new GeneralExperiment(LoadRPP,rppFiles,goldMetaData,goldCitations)
-    exp.run()
-  }
+    val opts = new PaperCoreferenceExperimentOpts
+    opts.parse(args)
+    
+    
+    val formatType = FormatType(opts.formatType.value)
 
+    val citationFiles: Iterable[File] =  if (opts.input.value.length == 1) {
+      if (new File(opts.input.value.head).isDirectory)
+        new File(opts.input.value.head).listFiles()
+      else
+        new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
+    } else {
+      opts.input.value.map(new File(_))
+    }
+
+    val loader = Loader(formatType)
+    val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)    
+    val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
+    val result = experiment.run()
+    if (opts.output.wasInvoked) {
+      new File(opts.output.value).getParentFile.mkdirs()
+      val writer = new PrintWriter(opts.output.value, "UTF-8")
+      writer.println(result.map( (x) => x._1 + ":\n" + x._2 + "\n\n").mkString("--------------------------------------------\n\n"))
+      writer.close()
+    }
+  }
 }

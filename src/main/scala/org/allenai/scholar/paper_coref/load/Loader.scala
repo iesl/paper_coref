@@ -2,7 +2,7 @@ package org.allenai.scholar.paper_coref.load
 
 import java.io.File
 
-import org.allenai.scholar.paper_coref.ParsedPaper
+import org.allenai.scholar.paper_coref.data_structures.ParsedPaper
 
 import scala.collection.mutable.ArrayBuffer
 

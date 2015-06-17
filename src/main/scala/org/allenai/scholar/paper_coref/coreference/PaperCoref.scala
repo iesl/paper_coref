@@ -1,6 +1,6 @@
 package org.allenai.scholar.paper_coref.coreference
 
-import org.allenai.scholar.paper_coref.PaperMention
+import org.allenai.scholar.paper_coref.data_structures.PaperMention
 
 trait PaperCoref {
 

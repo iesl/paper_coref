@@ -2,7 +2,8 @@ package org.allenai.scholar.paper_coref.load
 
 import java.io.{File, FileInputStream, InputStreamReader}
 
-import org.allenai.scholar.paper_coref.{FileExtras, LocatedCitation, ParsedPaper, RawCitation}
+import org.allenai.scholar.paper_coref.data_structures.{RawCitation, ParsedPaper, LocatedCitation}
+import org.allenai.scholar.paper_coref.FileExtras
 
 import scala.xml.{Elem, NodeSeq, XML}
 

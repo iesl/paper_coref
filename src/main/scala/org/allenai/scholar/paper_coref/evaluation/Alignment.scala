@@ -1,7 +1,8 @@
-package org.allenai.scholar.paper_coref
+package org.allenai.scholar.paper_coref.evaluation
+
+import cc.factorie.app.strings
 
 import scala.collection.mutable
-import cc.factorie.app.strings
 
 case class Alignable[T](alignOn:String, content:T)
 case class AlignResult[A,B](aligned:Iterable[(A,B)], unalignedSources:Iterable[A], unalignedTargets:Iterable[B])

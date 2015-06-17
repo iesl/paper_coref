@@ -7,6 +7,7 @@ import cc.factorie.app.nlp.segment.DeterministicTokenizer
 import cc.factorie.app.strings
 import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
+import org.allenai.scholar.paper_coref.data_structures._
 
 
 object Baseline extends HashingCoref {

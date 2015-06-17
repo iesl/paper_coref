@@ -3,6 +3,7 @@ package org.allenai.scholar
 import java.io.File
 
 import cc.factorie.util.BasicEvaluatableClustering
+import org.allenai.scholar.paper_coref.data_structures.PaperMention
 
 /**
  * @author John Sullivan

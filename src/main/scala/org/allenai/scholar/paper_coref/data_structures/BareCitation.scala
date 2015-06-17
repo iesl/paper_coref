@@ -1,7 +1,8 @@
-package org.allenai.scholar.paper_coref
+package org.allenai.scholar.paper_coref.data_structures
+
+import java.io._
 
 import cc.factorie._
-import java.io._
 
 /**
  * @author John Sullivan

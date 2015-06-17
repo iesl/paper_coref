@@ -1,6 +1,7 @@
-package org.allenai.scholar.paper_coref
+package org.allenai.scholar.paper_coref.data_structures
 
 import java.io._
+
 import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._

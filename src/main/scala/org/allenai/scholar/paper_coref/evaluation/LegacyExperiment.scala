@@ -5,6 +5,7 @@ import java.io.File
 import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.{AlphaOnly, Baseline, PaperCoref}
+import org.allenai.scholar.paper_coref.data_structures._
 
 trait ExperimentRunner {
   def corefs:Iterable[PaperCoref]

@@ -1,6 +1,7 @@
 package org.allenai.scholar.paper_coref.load
 
-import org.allenai.scholar.paper_coref.{RawCitation,StringExtras}
+import org.allenai.scholar.paper_coref.StringExtras
+import org.allenai.scholar.paper_coref.data_structures.RawCitation
 
 import scala.xml.{Elem, NodeSeq}
 

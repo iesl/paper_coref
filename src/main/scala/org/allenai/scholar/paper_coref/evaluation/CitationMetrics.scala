@@ -1,9 +1,11 @@
-package org.allenai.scholar.paper_coref
+package org.allenai.scholar.paper_coref.evaluation
 
 import java.io.File
 
 import cc.factorie.app.strings
 import org.allenai.scholar.paper_coref.coreference.Baseline
+import org.allenai.scholar.paper_coref.data_structures._
+import org.allenai.scholar.paper_coref._
 
 object CitationMetrics extends App {
  printStatistics(args(0))

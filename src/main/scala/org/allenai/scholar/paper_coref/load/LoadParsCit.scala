@@ -7,7 +7,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object LoadParsCit extends XMLLoader{
 
-  val formatType = ParsCit
+  val formatType = ParsCitFormat
   
   def loadHeader(xml: Elem): Option[RawCitation] = {
 

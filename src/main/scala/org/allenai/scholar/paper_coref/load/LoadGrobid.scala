@@ -6,7 +6,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object LoadGrobid extends XMLLoader{
   
-  val formatType = Grobid
+  val formatType = GrobidFormat
 
   def loadHeader(xml: Elem): Option[RawCitation] = {
     val header = xml \ "teiHeader"

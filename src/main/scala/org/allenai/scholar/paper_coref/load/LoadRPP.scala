@@ -6,7 +6,7 @@ import scala.xml.{Elem, NodeSeq}
 
 object LoadRPP extends XMLLoader{
   
-  val formatType = RPP
+  val formatType = RPPFormat
   
   override def loadHeader(xml: Elem): Option[RawCitation] = {
     val header = xml \\ "header"

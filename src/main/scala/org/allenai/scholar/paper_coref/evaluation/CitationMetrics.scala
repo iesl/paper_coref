@@ -1,18 +1,46 @@
 package org.allenai.scholar.paper_coref.evaluation
 
-import java.io.File
+import java.io.{FileReader, BufferedReader, File}
 
 import cc.factorie.app.strings
+import cc.factorie.util.DefaultCmdOptions
 import org.allenai.scholar.paper_coref.coreference.Baseline
 import org.allenai.scholar.paper_coref.data_structures._
 import org.allenai.scholar.paper_coref._
+import org.allenai.scholar.paper_coref.load.Loader
+import cc.factorie._
 
-object CitationMetrics extends App {
- printStatistics(args(0))
 
-  def printStatistics(citationDir: String): Unit = printStatistics(new File(citationDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable)
+class CitationMetricsOptions extends DefaultCmdOptions {
+  val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
+  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
+  val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
+}
 
-  def printStatistics(locatedCitations: Iterable[LocatedCitation]): Unit = {
+
+object CitationMetrics {
+
+  def main(args:Array[String]): Unit = {
+    val opts = new CitationMetricsOptions
+    opts.parse(args)
+    
+    val loader = Loader(opts.formatType.value)
+    
+    val citationFiles: Iterable[File] =  if (opts.input.value.length == 1) {
+      if (new File(opts.input.value.head).isDirectory)
+        new File(opts.input.value.head).listFiles()
+      else
+        new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
+    } else {
+      opts.input.value.map(new File(_))
+    }
+    printStatistics(loader.fromFiles(citationFiles).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadata.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
+  }
+  
+  //def printStatistics(citationDir: String): Unit = printStatistics(new File(citationDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable)
+  
+  def printStatistics(locatedCitations: Iterable[LocatedCitation], goldPaperMetaData: Iterable[PaperMetadata], goldBareCitation: Iterable[BareCitation]): Unit = {
 
     val paperCit = {c:LocatedCitation => c.paperId.isDefined}
     val bibCit = {c:LocatedCitation => c.citingPaperId.isDefined}
@@ -41,10 +69,8 @@ object CitationMetrics extends App {
     println("Papers with 0 paper cits: " + citsByPaper.percentWhere(_._2.count(_.paperId.isDefined) == 0))
 
     val goldCitDocs = {
-      val pms = PaperMetadata.fromFile(args(1))
-      val bcs = BareCitation.fromFile(args(2))
-      val pmMap = pms.map(p => p.id -> p).toMap
-      bcs.groupBy(_.from).flatMap{ case (k, vs) =>
+      val pmMap = goldPaperMetaData.map(p => p.id -> p).toMap
+      goldBareCitation.groupBy(_.from).flatMap{ case (k, vs) =>
         pmMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => pmMap.get(v.to))))
       }.map(g => g.doc.id -> g).toMap
     }

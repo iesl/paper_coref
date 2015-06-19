@@ -1,14 +1,17 @@
 package org.allenai.scholar.paper_coref.load
 
-import java.io.{FileInputStream, InputStreamReader, BufferedReader, File}
+import java.io.{BufferedReader, File, FileInputStream, InputStreamReader}
 
-import org.allenai.scholar.paper_coref.data_structures.{LocatedCitation, ParsedPaper}
-import org.json4s.jackson.JsonMethods._
 import cc.factorie._
+import org.allenai.scholar.paper_coref.data_structures.{LocatedCitation, ParsedPaper}
+import org.json4s._
+import org.json4s.jackson.JsonMethods._
 
 class LoadLocatedCitations extends Loader {
   
   override val formatType: FormatType = LocatedCitationFormat
+
+  implicit val formats = DefaultFormats
 
   override def fromFile(file: File, codec: String): Option[ParsedPaper] = 
     Some(ParsedPaper.fromCitations(getLocatedCitations(file,codec)))

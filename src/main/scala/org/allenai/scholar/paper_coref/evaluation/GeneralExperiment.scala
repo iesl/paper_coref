@@ -46,8 +46,8 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
     },
     corefs)  
   
-  def this(loader: Loader, citationFiles: Iterable[File], goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
-    this(loader.fromFiles(citationFiles),PaperMetadata.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
+  def this(loader: Loader, citationFiles: Iterable[File], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
+    this(loader.fromFiles(citationFiles,codec),PaperMetadata.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
   
 }
@@ -57,6 +57,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
 class PaperCoreferenceExperimentOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val output = new CmdOption[String]("output", "A file to write the output to (optional)", false)
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
   val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
@@ -83,7 +84,7 @@ object PaperCoreferenceExperiment {
 
     val loader = Loader(formatType)
     val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)    
-    val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
+    val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.inputEncoding.value,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
     val result = experiment.run()
     if (opts.output.wasInvoked) {
       new File(opts.output.value).getParentFile.mkdirs()

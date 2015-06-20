@@ -2,7 +2,6 @@ package org.allenai.scholar.paper_coref.data_structures
 
 import java.util.UUID
 
-import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.evaluation.{Alignment, Alignable}
 import org.json4s._
 import org.json4s.jackson.Serialization

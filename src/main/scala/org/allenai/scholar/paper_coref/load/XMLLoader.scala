@@ -2,15 +2,16 @@ package org.allenai.scholar.paper_coref.load
 
 import java.io.{File, FileInputStream, InputStreamReader}
 
-import org.allenai.scholar.paper_coref.data_structures.{RawCitation, ParsedPaper, LocatedCitation}
+import cc.factorie.util.NonValidatingXML
 import org.allenai.scholar.paper_coref.FileExtras
+import org.allenai.scholar.paper_coref.data_structures.{LocatedCitation, ParsedPaper, RawCitation}
 
-import scala.xml.{Elem, NodeSeq, XML}
+import scala.xml.{Elem, NodeSeq}
 
 trait XMLLoader extends Loader {
 
   def fromFile(file: File, codec: String = "ISO-8859-1"): Option[ParsedPaper] = {
-    val xml = XML.load(new InputStreamReader(new FileInputStream(file), codec))
+    val xml = NonValidatingXML.load(new InputStreamReader(new FileInputStream(file), codec))
     val paperId = file.getNameWithoutExtension
     val headerCitation = loadHeader(xml).map(LocatedCitation(_, None, Some(paperId)))
     val bib = loadReferences(xml).map(LocatedCitation(_,Some(paperId),None))
@@ -23,8 +24,8 @@ trait XMLLoader extends Loader {
   def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String = "ISO-8859-1"): Option[ParsedPaper] = {
     assert(headerFile.getNameWithoutExtension == referencesFile.getNameWithoutExtension)
     val paperId = headerFile.getNameWithoutExtension
-    val headerCitation = loadHeader(XML.load(new InputStreamReader(new FileInputStream(headerFile), codec))).map(LocatedCitation(_, None, Some(paperId)))
-    val bib = loadReferences(XML.load(new InputStreamReader(new FileInputStream(referencesFile), codec))).map(LocatedCitation(_,Some(paperId),None))
+    val headerCitation = loadHeader(NonValidatingXML.load(new InputStreamReader(new FileInputStream(headerFile), codec))).map(LocatedCitation(_, None, Some(paperId)))
+    val bib = loadReferences(NonValidatingXML.load(new InputStreamReader(new FileInputStream(referencesFile), codec))).map(LocatedCitation(_,Some(paperId),None))
     if (headerCitation.isDefined)
       Some(ParsedPaper.fromCitations(bib ++ Iterable(headerCitation.get)))
     else

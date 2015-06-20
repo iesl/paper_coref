@@ -14,6 +14,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
   def run() = {
     println("[PaperCoreferenceExperiment] Running Experiment")
     corefs map { c =>
+      val start = System.currentTimeMillis()
       println(s"[PaperCoreferenceExperiment] Running Coref: ${c.name}")
       val res = c.performCoref(mentions)
       println(s"[PaperCoreferenceExperiment] Finished performing coreference.")
@@ -23,6 +24,8 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
       println("[PaperCoreferenceExperiment] Creating predicted clustering.")
       val pred = res.predictedClustering
       println("[PaperCoreferenceExperiment] Done creating predicted clustering.")
+      val totalTime = System.currentTimeMillis() - start
+      println(s"[PaperCoreferenceExperiment] Time to run ${c.name}: $totalTime ms")
       println(s"[PaperCoreferenceExperiment] Results for: ${c.name}")
       val resultString = EvaluatableClustering.evaluationString(pred, gold)
       println(resultString)

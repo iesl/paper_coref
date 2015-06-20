@@ -89,5 +89,3 @@ __June 17.__ First evaluation report
 - Load metadata from JSON
 - Investigate any errors remaining from PDF processing
 - Test the parallelized iesl-pdf-to-text
-- Gather time statistics for coreference code.
-- Set up nicer experiment interface

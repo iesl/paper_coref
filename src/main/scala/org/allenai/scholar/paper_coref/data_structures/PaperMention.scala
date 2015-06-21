@@ -32,7 +32,7 @@ object PaperMention {
       val paperTitleMention = {
         val lc = predPaperCit.self
         val pm = goldPaperCit.doc
-        PaperMention(UUID.randomUUID().toString, lc.rawCitation.rawAuthors.toSet, lc.rawCitation.rawTitle, "", lc.rawCitation.date, pm.id, true,
+        PaperMention(UUID.randomUUID().toString, lc.rawCitation.rawAuthors.toSet, lc.rawCitation.rawTitle, lc.rawCitation.venue, lc.rawCitation.date, pm.id, true,
           Some(PaperMention(pm.id, pm.authors.toSet, pm.title, pm.venue, pm.year.toString, pm.id, true, None)))
       }
 
@@ -40,7 +40,7 @@ object PaperMention {
       val sources = predPaperCit.bib.map(p => Alignable(p.rawCitation.rawTitle, p))
       val targets = goldPaperCit.citations.map(p => Alignable(p.title, p))
       Alignment.jaggedAlign(sources, targets, Alignment.scoreDistPos).aligned.map { case (lc, pm) =>
-        PaperMention(UUID.randomUUID().toString, lc.rawCitation.rawAuthors.toSet, lc.rawCitation.rawTitle, "", lc.rawCitation.date, pm.id, false,
+        PaperMention(UUID.randomUUID().toString, lc.rawCitation.rawAuthors.toSet, lc.rawCitation.rawTitle, lc.rawCitation.venue, lc.rawCitation.date, pm.id, false,
           Some(PaperMention(pm.id, pm.authors.toSet, pm.title, pm.venue, pm.year.toString, pm.id, false, None)))
       } ++: Seq(paperTitleMention)
     }

@@ -13,7 +13,8 @@ object LoadGrobid extends XMLLoader{
     val title = (header \\ "titleStmt" \\ "title").map(_.text).headOption.getOrElse("")
     val authors = getAuthors(header)
     val date = getDate(header)
-    val citation = RawCitation(title,authors.toList,date)
+    val venue = (header \\ "sourceDesc" \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
+    val citation = RawCitation(title,authors.toList,date, venue)
     if (citation.isEmpty) None else Some(citation)
   }
   
@@ -28,16 +29,20 @@ object LoadGrobid extends XMLLoader{
     Author(firstAndMiddle.getOrElse("first",Seq("")).head, firstAndMiddle.getOrElse("middle",Seq()), lastName).formattedString
   }
   
+  private def getVenue(nodeSeq: NodeSeq) = {
+    (nodeSeq \\ "sourceDesc" \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
+  }
+  
   def loadReferences(xml: Elem):Iterable[RawCitation] =
     (xml \\ "biblStruct").flatMap(loadReference)
-
   
   def loadReference(biblStruct: NodeSeq): Option[RawCitation] = {
     val title = (biblStruct \\ "analytic" \\ "title").text
     val authors = getAuthors(biblStruct)
     val date = (biblStruct \\ "date" \\ "@when").text
-    val citation = RawCitation(title,authors.toList,date)
+    val venue = (biblStruct \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
+    val citation = RawCitation(title,authors.toList,date, venue)
     if (citation.isEmpty) None else Some(citation)
   }
-  
+
 }

@@ -54,10 +54,15 @@ case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation]) exte
  * @param rawTitle - The title of the paper exactly in the way it was extracted from the PDF
  * @param rawAuthors - A list of authors. The author names are not structured, e.g. first and last names are not annotated or differentiated
  * @param date - The date exactly in the way it was extracted from the PDF, e.g. without formatting
+ * @param venue - The venue the paper appeared in.
  */
-case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String) {
-  override def toString = s"(RawCitation, rawTitle: $rawTitle, rawAuthors: ${rawAuthors.mkString(", ")}, date: $date)"
-  def isEmpty: Boolean = rawTitle.isEmpty && rawAuthors.isEmpty && date.isEmpty 
+case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String, venue: String) {
+  override def toString = s"(RawCitation, rawTitle: $rawTitle, rawAuthors: ${rawAuthors.mkString(", ")}, date: $date, venue: $venue)"
+  def isEmpty: Boolean = rawTitle.isEmpty && rawAuthors.isEmpty && date.isEmpty && venue.isEmpty
+}
+
+object RawCitation {
+  def apply(rawTitle:String, rawAuthors:List[String], date:String): RawCitation = RawCitation(rawTitle,rawAuthors,date,"")
 }
 
 /**

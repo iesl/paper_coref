@@ -26,7 +26,8 @@ object LoadParsCit extends XMLLoader{
     val title = mostConfidentValue(xml, "title").getOrElse("")
     val authors = mostConfidentValues(xml, "author")
     val date = mostConfidentValue(xml, "date").getOrElse("")
-    val citation = RawCitation(title.removeNewlines, authors.map(_.removeNewlines).toList, date.removeNewlines)
+    val venue = (xml \\ "booktitle").map(_.text).headOption.getOrElse("")
+    val citation = RawCitation(title.removeNewlines, authors.map(_.removeNewlines).toList, date.removeNewlines, venue.removeNewlines)
     if (citation.isEmpty) None else Some(citation)
   }
   

@@ -13,7 +13,8 @@ object LoadRPP extends XMLLoader{
     val title = (header \\ "title").map(_.text).headOption.getOrElse("") // The first appearance of a title or else empty
     val authors =getAuthors(header)
     val date = Date((header \\ "date").map(_.text).headOption.getOrElse("")).year
-    val citation = RawCitation(title,authors.toList,date)
+    val venue = getVenue(header)
+    val citation = RawCitation(title,authors.toList,date,venue)
     if (citation.isEmpty) None else Some(citation)
   }
 
@@ -30,12 +31,16 @@ object LoadRPP extends XMLLoader{
   override def loadReferences(xml: Elem): Iterable[RawCitation] = {
     (xml \\ "references" \\ "reference").flatMap(loadReference)
   }
+  
+  def getVenue(nodeSeq: NodeSeq) =
+    Seq(nodeSeq \\ "journal", nodeSeq \\ "booktitle", nodeSeq \\ "institution").map(_.text).headOption.getOrElse("")
 
   override def loadReference(xml: NodeSeq): Option[RawCitation] = {
     val title = (xml \\ "title").map(_.text).headOption.getOrElse("")
     val authors = (xml \\ "authors" \\ "person").map(_ \ "_").map(_.map(_.text.trim).mkString(" ")).filterNot(_.isEmpty)
     val date = Date((xml \\ "date").map(_.text).headOption.getOrElse("")).year
-    val citation = RawCitation(title,authors.toList,date)
+    val venue = getVenue(xml)
+    val citation = RawCitation(title,authors.toList,date,venue)
     if (citation.isEmpty) None else Some(citation)
   }
 }

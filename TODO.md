@@ -65,8 +65,8 @@ __June 17.__ First evaluation report
 ??? | Ai2 Parscit | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
 "Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
 "AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
-"Baseline" | Grobid | 97.846 | 71.346 | 82.521 | 95.802 | 82.744 | 88.795 | 95.469 | 72.267 | 82.263 |
-"AlphaOnly" | Grobid | 98.035 | 66.982 | 79.587 | 95.783 | 80.226 | 87.317 | 95.649 | 68.113 | 79.567 |
+"Baseline" | Grobid | 98.085 | 72.477 | 83.359 | 97.813 | 83.665 | 90.188 | 97.566 | 73.349 | 83.742 |
+"AlphaOnly" | Grobid | | 98.255 | 68.044 | 80.405 | 97.884 | 81.124 | 88.719 | 97.710 | 69.133 | 80.974
 
 
 ##5. Notes##
@@ -80,12 +80,12 @@ __June 17.__ First evaluation report
 ##6. General TODO ##
 
 - Investigate the malformed XML errors present in the output of Grobid and Parscit
-- Continue to work on setting up and getting results for RPP
+- Debugging RPP
+- Documentation
+- JSON Serialization
 - Results using Rexa MetaTagger?
-- Study coreference procedure.
 - Continue to document the schema mapping
 - More details on the extractions that Jack had been using. 
-- More general schema mapping? Needs interface other than API?
 - Load metadata from JSON
 - Investigate any errors remaining from PDF processing
 - Test the parallelized iesl-pdf-to-text

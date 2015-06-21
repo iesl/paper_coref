@@ -29,12 +29,9 @@ object LoadGrobid extends XMLLoader{
     Author(firstAndMiddle.getOrElse("first",Seq("")).head, firstAndMiddle.getOrElse("middle",Seq()), lastName).formattedString
   }
   
-  private def getVenue(nodeSeq: NodeSeq) = {
-    (nodeSeq \\ "sourceDesc" \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
-  }
-  
+
   def loadReferences(xml: Elem):Iterable[RawCitation] =
-    (xml \\ "biblStruct").flatMap(loadReference)
+    (xml \\ "listBibl" \\ "biblStruct").flatMap(loadReference)
   
   def loadReference(biblStruct: NodeSeq): Option[RawCitation] = {
     val title = (biblStruct \\ "analytic" \\ "title").text

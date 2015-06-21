@@ -34,12 +34,21 @@ object LoadGrobid extends XMLLoader{
     (xml \\ "listBibl" \\ "biblStruct").flatMap(loadReference)
   
   def loadReference(biblStruct: NodeSeq): Option[RawCitation] = {
-    val title = (biblStruct \\ "analytic" \\ "title").text
-    val authors = getAuthors(biblStruct)
+    val title = getReferenceTitle(biblStruct)
+    val authors = getReferenceAuthors(biblStruct)
     val date = (biblStruct \\ "date" \\ "@when").text
     val venue = (biblStruct \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
     val citation = RawCitation(title,authors.toList,date, venue)
     if (citation.isEmpty) None else Some(citation)
   }
+  
+  private def getReferenceTitle(nodeSeq: NodeSeq) = {
+    ((nodeSeq \\ "analytic" \\ "title").filter((p) => (p \\ "@type").text == "main").map(_.text) ++
+      (nodeSeq \\ "monogr" \\ "title").map(_.text)).headOption.getOrElse("")
+  }
 
+  private def getReferenceAuthors(nodeSeq: NodeSeq) = {
+    Seq(nodeSeq \\ "analytic" \\ "author", nodeSeq \\ "monogr" \\ "author").map(_.map(_ \\ "persName").map(getAuthor)).find(_.nonEmpty).getOrElse(Seq.empty)
+  }
+  
 }

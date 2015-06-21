@@ -2,15 +2,12 @@ package org.allenai.scholar.paper_coref.data_structures
 
 import java.util.UUID
 
-import org.allenai.scholar.paper_coref.evaluation.{Alignment, Alignable}
+import org.allenai.scholar.paper_coref.evaluation.{Alignable, Alignment}
 import org.json4s._
 import org.json4s.jackson.Serialization
-import org.json4s.jackson.Serialization.{read, write}
+import org.json4s.jackson.Serialization.read
 
-case class PaperMention(id:String, authors:Set[String], title:String, venue:String, date:String, trueLabel:String, isPaper:Boolean, goldData:Option[PaperMention]) {
-  implicit val formats = Serialization.formats(NoTypeHints)
-  lazy val toJsonString = write(this)
-}
+case class PaperMention(id:String, authors:Set[String], title:String, venue:String, date:String, trueLabel:String, isPaper:Boolean, goldData:Option[PaperMention]) extends JSONSerializable
 
 object PaperMention {
   implicit val formats = Serialization.formats(NoTypeHints)

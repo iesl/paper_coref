@@ -5,10 +5,14 @@ import java.io._
 import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
+import org.json4s.jackson.Serialization
+import org.json4s.jackson.Serialization.{write,writePretty}
 
 // TODO: This has issues with EmptyValueStrategy
 trait JSONSerializable {
-  def toJSON: String
+  implicit val formats = Serialization.formats(NoTypeHints)
+  def toJSON: String = write(this)
+  def toJSONFormatted: String = writePretty(this)
 }
 
 object JSONSerializable {
@@ -46,7 +50,6 @@ object ParsedPaper {
  */
 case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation]) extends JSONSerializable{
   override def toString = s"(ParsedPaper(${self.paperId.getOrElse("UnknownId")}), self: ${self.toString}, bib: ${bib.map(_.toString).mkString(", ")})"
-  def toJSON: String = compact(render(Extraction.decompose(this)(DefaultFormats)))
 }
 
 /**
@@ -75,7 +78,6 @@ case class LocatedCitation(rawCitation:RawCitation, citingPaperId:Option[String]
   lazy val foundInId = citingPaperId.getOrElse(paperId.get)
   override def toString = s"(LocatedCitation, rawCitation:${rawCitation.toString}, citingPaperId: $citingPaperId, paperId: $paperId)"
   def isEmpty: Boolean = rawCitation.isEmpty
-  def toJSON: String = compact(render(Extraction.decompose(this)(DefaultFormats)))
 }
 
 object LocatedCitation {

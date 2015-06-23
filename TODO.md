@@ -55,19 +55,6 @@ __June 17.__ First evaluation report
 - __ParsCit.__ After a slightly complicated set up process, ParsCit runs on blake. See the _doc_ directory for more info on the installation. Currently using __pdftotext__ to generate the plain text input to __ParsCit__. However, I need to talk to our folks here about using __iesl-pdf-to-text__ to generate input or the AI2 folks about what they use.
 - __RPP.__ I've run into issues using this. I think I have not set it up properly. I am trying currently to resolve these. 
 
-##4. Coreference Results##
-
-- Initial run with current, not-so sophisticated schema mapping, gives: 
-
-
-| Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
-| ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
-??? | Ai2 Parscit | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
-"Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
-"AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
-"Baseline" | Grobid | 98.756 | 73.653 | 84.377 | 99.142 | 84.938 | 91.492 | 98.718 | 74.537 | 84.940 |
-"AlphaOnly" | Grobid | 98.908 | 69.017 | 81.302 | 99.172 | 82.271 | 89.935 | 98.796 | 70.126 | 82.028 |
-
 
 ##5. Notes##
 

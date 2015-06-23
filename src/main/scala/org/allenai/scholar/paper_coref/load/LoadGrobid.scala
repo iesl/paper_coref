@@ -12,13 +12,13 @@ object LoadGrobid extends XMLLoader{
     val header = xml \ "teiHeader"
     val title = (header \\ "titleStmt" \\ "title").map(_.text).headOption.getOrElse("")
     val authors = getAuthors(header)
-    val date = getDate(header)
+    val date = getDate(header  \\  "publicationStmt")
     val venue = (header \\ "sourceDesc" \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
     val citation = RawCitation(title,authors.toList,date, venue)
     if (citation.isEmpty) None else Some(citation)
   }
   
-  private def getDate(nodeSeq: NodeSeq) = Date((nodeSeq \\  "publicationStmt"  \\ "date").map((p) => ((p \\ "@when").text, (p \\ "@type").text)).filter(_._2 == "published").map(_._1).headOption.getOrElse("")).year
+  private def getDate(nodeSeq: NodeSeq) = Date((nodeSeq  \\ "date").map((p) => ((p \\ "@when").text, (p \\ "@type").text)).filter(_._2 == "published").map(_._1).headOption.getOrElse("")).year
   
   private def getAuthors(nodeSeq: NodeSeq) =
     (nodeSeq \\ "author").map(_ \\ "persName").map(getAuthor)
@@ -36,7 +36,7 @@ object LoadGrobid extends XMLLoader{
   def loadReference(biblStruct: NodeSeq): Option[RawCitation] = {
     val title = getReferenceTitle(biblStruct)
     val authors = getReferenceAuthors(biblStruct)
-    val date = (biblStruct \\ "date" \\ "@when").text
+    val date = getDate(biblStruct) //(biblStruct \\ "date" \\ "@when").text ?
     val venue = (biblStruct \\ "monogr" \\ "title").map(_.text).headOption.getOrElse("")
     val citation = RawCitation(title,authors.toList,date, venue)
     if (citation.isEmpty) None else Some(citation)

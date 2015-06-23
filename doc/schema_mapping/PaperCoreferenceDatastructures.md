@@ -2,12 +2,12 @@
 
 ## RawCitation ##
 
-A __RawCitation__ is a representation of a paper. It could either be the header of a paper or an entry in the reference section of the paper. The fields of a __RawCitation__ are:
+A __RawCitation__ is a representation of a paper. It could either be the header of a paper or an entry in the reference section of the paper. Its schema is similar to the PaperMetaData data structure in __Meta-Eval__. The fields of a __RawCitation__ are:
 
-- rawTitle:String - _The title of the paper exactly in the way it was extracted from the PDF_
-- rawAuthors:List[String] - _A list of authors. The author names are not structured, e.g. first and last names are not annotated or differentiated_
-- date:String - _The date exactly in the way it was extracted from the PDF, e.g. without formatting_
- 
+- rawTitle:String - _The title of the paper as it was extracted from the PDF_
+- rawAuthors:List[String] - _A list of authors. The author names are not necessarily structured, e.g. first and last names are not necessarily annotated or differentiated_
+- date:String - _The date (often just the year) in the way it was extracted from the PDF, e.g. without formatting_
+- venue: String - _The venue as it was extracted from the PDF_
 
 ## LocatedCitation ##
 

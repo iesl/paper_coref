@@ -35,12 +35,12 @@ object CitationMetrics {
     } else {
       opts.input.value.map(new File(_))
     }
-    printStatistics(loader.fromFiles(citationFiles).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadata.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
+    printStatistics(loader.fromFiles(citationFiles).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
   }
   
   //def printStatistics(citationDir: String): Unit = printStatistics(new File(citationDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable)
   
-  def printStatistics(locatedCitations: Iterable[LocatedCitation], goldPaperMetaData: Iterable[PaperMetadata], goldBareCitation: Iterable[BareCitation]): Unit = {
+  def printStatistics(locatedCitations: Iterable[LocatedCitation], goldPaperMetaData: Iterable[PaperMetadataWithId], goldBareCitation: Iterable[BareCitation]): Unit = {
 
     val paperCit = {c:LocatedCitation => c.paperId.isDefined}
     val bibCit = {c:LocatedCitation => c.citingPaperId.isDefined}

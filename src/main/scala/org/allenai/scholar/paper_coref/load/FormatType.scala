@@ -21,6 +21,10 @@ case object LocatedCitationFormat extends FormatType {
   val name = "LocatedCitation"
 }
 
+case object PaperMetaDataFormat extends FormatType {
+  val name = "PaperMetaData"
+}
+
 object FormatType {
 
   private val allFormatTypes = Iterable(RPPFormat,GrobidFormat,ParsCitFormat,LocatedCitationFormat).map( (ft) => ft.name -> ft).toMap

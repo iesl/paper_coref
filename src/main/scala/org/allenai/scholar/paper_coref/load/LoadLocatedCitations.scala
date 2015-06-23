@@ -14,7 +14,7 @@ class LoadLocatedCitations extends Loader {
   implicit val formats = DefaultFormats
 
   override def fromFile(file: File, codec: String): Option[ParsedPaper] = 
-    Some(ParsedPaper.fromCitations(getLocatedCitations(file,codec)))
+    ParsedPaper.fromCitationsSafe(getLocatedCitations(file,codec))
 
   override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  {
     val headers = getLocatedCitations(headerFile,codec)

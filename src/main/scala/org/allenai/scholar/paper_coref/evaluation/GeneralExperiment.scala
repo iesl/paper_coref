@@ -37,7 +37,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
   def this(citationMap: Map[String,ParsedPaper], goldCitationDocumentMap: Map[String, GoldCitationDoc], corefs: Iterable[PaperCoref]) = 
     this(PaperMention.generate(citationMap, goldCitationDocumentMap),corefs)
   
-  def this(parsedPapers: Iterable[ParsedPaper], goldPaperMetaData: Iterable[PaperMetadata], goldCitationEdges: Iterable[BareCitation], corefs: Iterable[PaperCoref]) = 
+  def this(parsedPapers: Iterable[ParsedPaper], goldPaperMetaData: Iterable[PaperMetadataWithId], goldCitationEdges: Iterable[BareCitation], corefs: Iterable[PaperCoref]) =
     this(parsedPapers.groupBy(_.self.foundInId).mapValues(_.head),
     {
       val pmMap = goldPaperMetaData.map(p => p.id -> p).toMap
@@ -50,7 +50,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
     corefs)  
   
   def this(loader: Loader, citationFiles: Iterable[File], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
-    this(loader.fromFiles(citationFiles,codec),PaperMetadata.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
+    this(loader.fromFiles(citationFiles,codec),PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
   
 }

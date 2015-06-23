@@ -27,7 +27,7 @@ object Experiments extends App with ExperimentRunner {
   val locCits = new File(citsDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable
 
   val goldCitDocs = {
-    val pms = PaperMetadata.fromFile(args(1))
+    val pms = PaperMetadataWithId.fromFile(args(1))
     val bcs = BareCitation.fromFile(args(2))
     val pmMap = pms.map(p => p.id -> p).toMap
     bcs.groupBy(_.from).flatMap{ case (k, vs) =>

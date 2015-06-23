@@ -40,6 +40,12 @@ object ParsedPaper {
     assert(cits.count(_.paperId.isDefined) == 1)
     ParsedPaper(cits.filter(_.paperId.isDefined).head, cits.filterNot(_.paperId.isDefined))
   }
+  def fromCitationsSafe(cits:Iterable[LocatedCitation]): Option[ParsedPaper] = {
+    if (cits.count(_.paperId.isDefined) == 1)
+      Some(ParsedPaper(cits.filter(_.paperId.isDefined).head, cits.filterNot(_.paperId.isDefined)))
+    else 
+      None
+  }
 }
 
 /**
@@ -50,6 +56,7 @@ object ParsedPaper {
  */
 case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation]) extends JSONSerializable{
   override def toString = s"(ParsedPaper(${self.paperId.getOrElse("UnknownId")}), self: ${self.toString}, bib: ${bib.map(_.toString).mkString(", ")})"
+  def toPaperMetadata: Iterable[PaperMetadata] = (Iterable(self) ++ bib).map(_.rawCitation).map(PaperMetadata.fromRawCitation)
 }
 
 /**
@@ -66,6 +73,7 @@ case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String, ve
 
 object RawCitation {
   def apply(rawTitle:String, rawAuthors:List[String], date:String): RawCitation = RawCitation(rawTitle,rawAuthors,date,"")
+  def fromPaperMetadata(paperMetadata: PaperMetadata) = RawCitation(paperMetadata.title,paperMetadata.authors,paperMetadata.year.toString,paperMetadata.venue)
 }
 
 /**

@@ -30,10 +30,11 @@ object WriteExtractionsToJSON {
     }
     val loader = Loader(opts.formatType.value)
 
+    new File(opts.output.value).mkdirs()
     val papers = loader.fromFiles(citationFiles)
     papers.foreach{ 
       paper =>
-        val pw = new PrintWriter(paper.self.foundInId + ".json")
+        val pw = new PrintWriter(new File(opts.output.value,paper.self.foundInId + ".json"))
         if (opts.compact.value)
           pw.print(paper.toJSON)
         else

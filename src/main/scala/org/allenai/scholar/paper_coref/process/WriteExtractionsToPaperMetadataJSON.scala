@@ -31,10 +31,12 @@ object WriteExtractionsToPaperMetadataJSON {
     }
     val loader = Loader(opts.formatType.value)
 
+    new File(opts.output.value).mkdirs()
+
     val papers = loader.fromFiles(citationFiles)
     papers.map(_.toPaperMetadata).zip(citationFiles).foreach{
       case (paper,file) =>
-        val pw = new PrintWriter(file.getNameWithoutExtension + ".json")
+        val pw = new PrintWriter(new File(opts.output.value,file.getNameWithoutExtension + ".json"))
         if (opts.compact.value)
           paper.foreach( (p) => pw.print(p.toJSON))
         else

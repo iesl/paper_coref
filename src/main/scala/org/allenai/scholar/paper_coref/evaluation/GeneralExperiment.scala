@@ -13,7 +13,6 @@ import scala.collection.JavaConverters._
 
 class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) {
 
-  
   private val _clusteringResults = new util.HashMap[String, Iterable[Iterable[PaperMention]]]().asScala
   
   lazy val goldClustering = mentions.groupBy(_.trueLabel).map(_._2)
@@ -72,7 +71,7 @@ class PaperCoreferenceExperimentOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
-  val output = new CmdOption[String]("output", "A file to write the output to (optional)", false)
+  val output = new CmdOption[String]("output", "A directory in which to write output to (optional)", false)
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
   val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
   val corefAlgorithms = new CmdOption[List[String]]("coref-algorithms", "The names of the coref algorithms to use",true)
@@ -101,10 +100,24 @@ object PaperCoreferenceExperiment {
     val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.inputEncoding.value,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
     val result = experiment.run()
     if (opts.output.wasInvoked) {
-      new File(opts.output.value).getParentFile.mkdirs()
-      val writer = new PrintWriter(opts.output.value, "UTF-8")
-      writer.println(result.map( (x) => x._1 + ":\n" + x._2 + "\n\n").mkString("--------------------------------------------\n\n"))
-      writer.close()
+      val outputDir = new File(opts.output.value)
+      outputDir.mkdirs()
+      val writer1 = new PrintWriter(new File(outputDir, "results.txt"), "UTF-8")
+      writer1.println(result.map( (x) => x._1 + ":\n" + x._2 + "\n\n").mkString("--------------------------------------------\n\n"))
+      writer1.close()
+
+      corefs.foreach {
+        coref =>
+          val predictedHtml = HTMLReport.generateHTML(experiment.predictedClustering(coref.name).get, Some(s"Predicted - ${coref.name}"))
+          val writer = new PrintWriter(new File(outputDir, coref.name + ".html"), "UTF-8")
+          writer.println(predictedHtml)
+          writer.close()
+      }
+
+      val goldHTML = HTMLReport.generateHTML(experiment.goldClustering, Some("Gold Clustering"))
+      val writer2 = new PrintWriter(new File(outputDir, "gold.html"), "UTF-8")
+      writer2.println(goldHTML)
+      writer2.close()
     }
   }
 }

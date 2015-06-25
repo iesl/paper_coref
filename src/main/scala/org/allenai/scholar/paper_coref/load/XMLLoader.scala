@@ -10,15 +10,15 @@ import scala.xml.{Elem, NodeSeq}
 
 trait XMLLoader extends Loader {
 
-  def fromFile(file: File, codec: String = "ISO-8859-1"): Option[ParsedPaper] = {
+  def fromFile(file: File, codec: String = "ISO-8859-1"): Iterable[ParsedPaper] = {
     val xml = NonValidatingXML.load(new InputStreamReader(new FileInputStream(file), codec))
     val paperId = file.getNameWithoutExtension
     val headerCitation = loadHeader(xml).map(LocatedCitation(_, None, Some(paperId)))
     val bib = loadReferences(xml).map(LocatedCitation(_,Some(paperId),None))
     if (headerCitation.isDefined)
-      Some(ParsedPaper.fromCitations(bib ++ Iterable(headerCitation.get)))
+      Iterable(ParsedPaper.fromCitations(bib ++ Iterable(headerCitation.get)))
     else
-      None
+      Iterable.empty
   }
 
   def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String = "ISO-8859-1"): Option[ParsedPaper] = {

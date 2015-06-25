@@ -13,7 +13,7 @@ class LoadPaperMetadata extends Loader {
   
   implicit val formats = DefaultFormats
 
-  override def fromFile(file: File, codec: String): Option[ParsedPaper] = {
+  override def fromFile(file: File, codec: String): Iterable[ParsedPaper] = {
     val rawCitations = getPaperMetadata(file,codec).map(RawCitation.fromPaperMetadata)
     if (rawCitations.size >= 1) {
       val id = file.getNameWithoutExtension
@@ -21,7 +21,7 @@ class LoadPaperMetadata extends Loader {
       val cits = rawCitations.drop(1).map(LocatedCitation(_,None,Some(id)))
       ParsedPaper.fromCitationsSafe(Iterable(self) ++ cits)
     } else 
-      None
+      Iterable.empty
   }
 
   override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  throw new UnsupportedOperationException

@@ -30,9 +30,9 @@ trait Loader {
     res
   }
 
-  def fromFilename(filename:String, codec: String = "ISO-8859-1"): Option[ParsedPaper] = fromFile(new File(filename),codec)
+  def fromFilename(filename:String, codec: String = "ISO-8859-1"): Iterable[ParsedPaper] = fromFile(new File(filename),codec)
 
-  def fromFile(file: File, codec: String = "ISO-8859-1"): Option[ParsedPaper]
+  def fromFile(file: File, codec: String = "ISO-8859-1"): Iterable[ParsedPaper]
 
   def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String = "ISO-8859-1"): Option[ParsedPaper]
 

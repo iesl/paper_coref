@@ -4,7 +4,6 @@ import java.io.{BufferedReader, File, FileReader, PrintWriter}
 
 import cc.factorie._
 import cc.factorie.util.DefaultCmdOptions
-import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.load.Loader
 
 class WriteExtractionsToPaperMetadataJSONOpts extends DefaultCmdOptions {
@@ -34,9 +33,9 @@ object WriteExtractionsToPaperMetadataJSON {
     new File(opts.output.value).mkdirs()
 
     val papers = loader.fromFiles(citationFiles)
-    papers.map(_.toPaperMetadata).zip(citationFiles).foreach{
-      case (paper,file) =>
-        val pw = new PrintWriter(new File(opts.output.value,file.getNameWithoutExtension + ".json"))
+    papers.map((c) => (c.self.foundInId,c.toPaperMetadata)).foreach{
+      case (paperId,paper) =>
+        val pw = new PrintWriter(new File(opts.output.value, paperId + ".json"))
         if (opts.compact.value)
           paper.foreach( (p) => pw.print(p.toJSON))
         else

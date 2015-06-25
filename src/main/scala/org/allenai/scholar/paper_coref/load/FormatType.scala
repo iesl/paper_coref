@@ -25,9 +25,13 @@ case object PaperMetaDataFormat extends FormatType {
   val name = "PaperMetaData"
 }
 
+case object CoraFormat extends FormatType {
+  val name = "Cora"
+}
+
 object FormatType {
 
-  private val allFormatTypes = Iterable(RPPFormat,GrobidFormat,ParsCitFormat,LocatedCitationFormat).map( (ft) => ft.name -> ft).toMap
+  private val allFormatTypes = Iterable(RPPFormat,GrobidFormat,ParsCitFormat,LocatedCitationFormat,CoraFormat).map( (ft) => ft.name -> ft).toMap
   
   def apply(string: String) = allFormatTypes(string)
   

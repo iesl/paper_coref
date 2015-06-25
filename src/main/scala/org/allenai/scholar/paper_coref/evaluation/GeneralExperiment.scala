@@ -1,6 +1,7 @@
 package org.allenai.scholar.paper_coref.evaluation
 
 import java.io.{BufferedReader, File, FileReader, PrintWriter}
+import java.util
 
 import cc.factorie._
 import cc.factorie.util.{DefaultCmdOptions, EvaluatableClustering}
@@ -8,21 +9,31 @@ import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.PaperCoref
 import org.allenai.scholar.paper_coref.data_structures._
 import org.allenai.scholar.paper_coref.load._
+import scala.collection.JavaConverters._
 
 class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) {
 
+  
+  private val _clusteringResults = new util.HashMap[String, Iterable[Iterable[PaperMention]]]().asScala
+  
+  lazy val goldClustering = mentions.groupBy(_.trueLabel).map(_._2)
+  
+  def predictedClusteringResults = _clusteringResults
+  
+  def predictedClustering(corefAlgName: String) = _clusteringResults.get(corefAlgName)
+  
   def run() = {
     println("[PaperCoreferenceExperiment] Running Experiment")
     corefs map { c =>
       val start = System.currentTimeMillis()
       println(s"[PaperCoreferenceExperiment] Running Coref: ${c.name}")
-      val res = c.performCoref(mentions)
+      _clusteringResults.put(c.name,c.performCoref(mentions))
       println(s"[PaperCoreferenceExperiment] Finished performing coreference.")
       println("[PaperCoreferenceExperiment] Creating gold clustering.")
-      val gold = res.trueClustering
+      val gold = _clusteringResults(c.name).trueClustering
       println("[PaperCoreferenceExperiment] Done creating gold clustering.")
       println("[PaperCoreferenceExperiment] Creating predicted clustering.")
-      val pred = res.predictedClustering
+      val pred = _clusteringResults(c.name).predictedClustering
       println("[PaperCoreferenceExperiment] Done creating predicted clustering.")
       val totalTime = System.currentTimeMillis() - start
       println(s"[PaperCoreferenceExperiment] Time to run ${c.name}: $totalTime ms")

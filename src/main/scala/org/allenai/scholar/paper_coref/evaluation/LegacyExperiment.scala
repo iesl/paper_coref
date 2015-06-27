@@ -7,6 +7,9 @@ import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.{AlphaOnly, Baseline, PaperCoref}
 import org.allenai.scholar.paper_coref.data_structures._
 
+/**
+ * Experiment set-up that was used in previous system.
+ */
 trait ExperimentRunner {
   def corefs:Iterable[PaperCoref]
   def mentions:Iterable[PaperMention]
@@ -22,6 +25,9 @@ trait ExperimentRunner {
   }
 }
 
+/**
+ * Experiment implementation used in previous system.
+ */
 object Experiments extends App with ExperimentRunner {
   val citsDir = args(0)
   val locCits = new File(citsDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable

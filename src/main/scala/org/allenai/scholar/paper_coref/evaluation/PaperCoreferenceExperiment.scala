@@ -3,24 +3,44 @@ package org.allenai.scholar.paper_coref.evaluation
 import java.io._
 import java.util
 
-import cc.factorie._
-import cc.factorie.util.{DefaultCmdOptions, EvaluatableClustering}
+import cc.factorie.util.EvaluatableClustering
 import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.PaperCoref
 import org.allenai.scholar.paper_coref.data_structures._
 import org.allenai.scholar.paper_coref.load._
+
 import scala.collection.JavaConverters._
 
+
+/**
+ * Paper coreference experiment class. Used to perform and evaluate coreference on a set of PaperMentions
+ * Each of the given coref algorithms is evaluated.  
+ * @param mentions - the mentions to cluster
+ * @param corefs - the coref algorithms to use
+ */
 class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) {
 
   private val _clusteringResults = new util.HashMap[String, Iterable[Iterable[PaperMention]]]().asScala
   
   lazy val goldClustering = mentions.groupBy(_.trueLabel).map(_._2)
-  
+
+  /**
+   * Returns all of the coreference results.  
+   * @return - A map from PaperCoref algorithm names to the coreference results
+   */
   def predictedClusteringResults = _clusteringResults
-  
+
+  /**
+   * The coreference results of the algorithm with the given name. 
+   * @param corefAlgName - the name of the algorithm
+   * @return - the coref results for corefAlgName
+   */
   def predictedClustering(corefAlgName: String) = _clusteringResults.get(corefAlgName)
-  
+
+  /**
+   * Executes each of the coreference algorithms on the set of mentions.
+   * @return - Pairs of coreference algorithm names and results 
+   */
   def run() = {
     println("[PaperCoreferenceExperiment] Running Experiment")
     corefs map { c =>
@@ -42,11 +62,27 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
       (c.name, resultString)
     }
   }
-  
-  
+
+  /**
+   * Alternate constructor. Constructs PaperMentions from the extracted ParsedPaper and gold data using the
+   * PaperMention.generate function.  
+   * @param citationMap - Mapping from Paper Id to ParsedPaper object
+   * @param goldCitationDocumentMap - Mapping from Paper Id to GoldCitationDoc object
+   * @param corefs - the coref algorithms to use
+   * @return
+   */
   def this(citationMap: Map[String,ParsedPaper], goldCitationDocumentMap: Map[String, GoldCitationDoc], corefs: Iterable[PaperCoref]) = 
     this(PaperMention.generate(citationMap, goldCitationDocumentMap),corefs)
-  
+
+  /**
+   * Alternate constructor. Constructs the citationMap and goldCitationDocumentMap used in other constructor 
+   * from the extractions and the gold meta data and citation edges.  
+   * @param parsedPapers - extracted papers 
+   * @param goldPaperMetaData - gold paper metadata 
+   * @param goldCitationEdges - gold citation edges
+   * @param corefs - coref algorithms to use
+   * @return
+   */
   def this(parsedPapers: Iterable[ParsedPaper], goldPaperMetaData: Iterable[PaperMetadataWithId], goldCitationEdges: Iterable[BareCitation], corefs: Iterable[PaperCoref]) =
     this(parsedPapers.groupBy(_.self.foundInId).mapValues(_.head),
     {
@@ -57,58 +93,19 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
         pmMap.get(k).map(pm => GoldCitationDoc(pm, vs.flatMap(v => pmMap.get(v.to))))
       }.map(g => g.doc.id -> g).toMap
     },
-    corefs)  
-  
+    corefs)
+
+  /**
+   * Loads data from givne arguments and uses other constructor to create experiment.
+   * @param loader - the loader to use
+   * @param citationFiles - the files to load ParsedPapers from
+   * @param codec - the encoding of the files
+   * @param goldMetaDataFilename - the filename of the gold metadata file
+   * @param goldCitationsFilename - the filename of the gold citations file
+   * @param corefs - the coref algorithms to use.
+   */
   def this(loader: Loader, citationFiles: Iterable[File], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
     this(loader.fromFiles(citationFiles,codec),PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
   
-}
-
-
-
-class PaperCoreferenceExperimentOpts extends DefaultCmdOptions {
-  val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
-  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
-  val inputType = new CmdOption[String]("input-type", "Directory, file of filenames, file", true)
-  val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
-  val output = new CmdOption[String]("output", "A directory in which to write output to (optional)", false)
-  val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
-  val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
-  val corefAlgorithms = new CmdOption[List[String]]("coref-algorithms", "The names of the coref algorithms to use",true)
-}
-
-object PaperCoreferenceExperiment {
-
-  def main(args: Array[String]): Unit = {
-    val opts = new PaperCoreferenceExperimentOpts
-    opts.parse(args)
-    
-    
-    val formatType = FormatType(opts.formatType.value)
-
-    val citationFiles: Iterable[File] =
-      opts.input.value.flatMap((f) =>
-        if (opts.inputType.value.equalsIgnoreCase("directory"))
-          new File(opts.input.value.head).listFiles()
-        else if (opts.inputType.value.equalsIgnoreCase("file of filenames")) {
-          new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
-        } else if (opts.inputType.value.equalsIgnoreCase("file")) {
-          Iterable(new File(f))            
-        } else 
-          throw new Exception(s"Unknown input type: ${opts.inputType.value}. Must be: directory,file of filenames, file")
-      )
-
-    val loader = Loader(formatType)
-    val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)    
-    val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.inputEncoding.value,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
-    val result = experiment.run()
-    if (opts.output.wasInvoked) {
-      val outputDir = new File(opts.output.value)
-      outputDir.mkdirs()
-      val writer1 = new PrintWriter(new File(outputDir, "results.txt"), "UTF-8")
-      writer1.println(result.map( (x) => x._1 + ":\n" + x._2 + "\n\n").mkString("--------------------------------------------\n\n"))
-      writer1.close()
-    }
-  }
 }

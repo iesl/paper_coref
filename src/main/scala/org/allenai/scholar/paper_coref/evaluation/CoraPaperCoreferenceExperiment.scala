@@ -6,16 +6,24 @@ import cc.factorie.util.DefaultCmdOptions
 import org.allenai.scholar.paper_coref.coreference.PaperCoref
 import org.allenai.scholar.paper_coref.load.LoadCora
 
-class CoraExperimentOpts extends DefaultCmdOptions {
+
+/**
+ * Command line options for the Cora Experiment 
+ */
+class CoraPaperCoreferenceExperimentOpts extends DefaultCmdOptions {
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val output = new CmdOption[String]("output", "A directory in which to write the output to (optional)", false)
   val corefAlgorithms = new CmdOption[List[String]]("coref-algorithms", "The names of the coref algorithms to use",true)
 }
-object CoraExperiment {
+
+/**
+ * Runs the coreference experiment on the Cora dataset. Writes HTML report of mention clustering.
+ */
+object CoraPaperCoreferenceExperiment {
 
   def main(args: Array[String]): Unit = {
-    val opts = new CoraExperimentOpts
+    val opts = new CoraPaperCoreferenceExperimentOpts
     opts.parse(args)
     val mentions = opts.input.value.flatMap(file => LoadCora.loadMentionsFromFile(new File(file), opts.inputEncoding.value))
     val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)

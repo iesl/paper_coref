@@ -3,9 +3,19 @@ package org.allenai.scholar.paper_coref.evaluation
 import org.allenai.scholar.paper_coref.data_structures.PaperMention
 
 
+/**
+ * Utility to write HTML formatted version of mention clustering. 
+ */
 object HTMLReport {
-  
-  
+
+  /**
+   * Generates an HTML formatted version of the mention clustering.
+   * WARNING: The resulting string will be quite large for large numbers
+   * of mentions
+   * @param clustering - the coreference output
+   * @param name - the name to use as the title of the html file
+   * @return - the html formatted string
+   */
   def generateHTML(clustering:Iterable[Iterable[PaperMention]], name: Option[String] = None) = {
     val sb = new StringBuffer(1000)
     

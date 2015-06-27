@@ -10,8 +10,10 @@ import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.load.Loader
 import cc.factorie._
 
-
-class CitationMetricsOptions extends DefaultCmdOptions {
+/**
+ * Command line options for citation metrics script 
+ */
+class CitationMetricsOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
@@ -19,10 +21,18 @@ class CitationMetricsOptions extends DefaultCmdOptions {
 }
 
 
+/**
+ * Given a collection of extracted citations from the ACL corpus  this class can be used to calculate various statistics 
+ * about the extractions with respect to the gold meta data and edges. 
+ */
 object CitationMetrics {
 
+  /**
+   * Uses command line options to specify which citations to load.  Prints out all citation metrics. 
+   * @param args - command line args with format of CitationMetricsOptions
+   */
   def main(args:Array[String]): Unit = {
-    val opts = new CitationMetricsOptions
+    val opts = new CitationMetricsOpts
     opts.parse(args)
     
     val loader = Loader(opts.formatType.value)
@@ -37,9 +47,13 @@ object CitationMetrics {
     }
     printStatistics(loader.fromFiles(citationFiles).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
   }
-  
-  //def printStatistics(citationDir: String): Unit = printStatistics(new File(citationDir).listFiles().flatMap(f => LocatedCitation.fromFile(f.getAbsolutePath)).toIterable)
-  
+
+  /**
+   * Print the statistics about the citations
+   * @param locatedCitations - the citations extracted from the corpus
+   * @param goldPaperMetaData - the gold paper meta data
+   * @param goldBareCitation - the citation edge data
+   */
   def printStatistics(locatedCitations: Iterable[LocatedCitation], goldPaperMetaData: Iterable[PaperMetadataWithId], goldBareCitation: Iterable[BareCitation]): Unit = {
 
     val paperCit = {c:LocatedCitation => c.paperId.isDefined}

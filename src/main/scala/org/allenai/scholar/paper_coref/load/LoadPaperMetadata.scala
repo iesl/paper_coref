@@ -8,8 +8,13 @@ import org.json4s.jackson.JsonMethods._
 import cc.factorie._
 import org.allenai.scholar.paper_coref._
 
+/**
+ * Loader for JSON serialized PaperMetadata data.
+ * Note that data must be stored such that each JSON
+ * object appears on a single line.
+ */
 object LoadPaperMetadata extends Loader {
-  override val formatType: FormatType = PaperMetaDataFormat
+  override val formatType: FormatType = PaperMetadataFormat
   
   implicit val formats = DefaultFormats
 

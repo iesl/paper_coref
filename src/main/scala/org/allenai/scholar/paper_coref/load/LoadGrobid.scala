@@ -4,6 +4,9 @@ import org.allenai.scholar.paper_coref.data_structures.{Date, Author, RawCitatio
 
 import scala.xml.{Elem, NodeSeq}
 
+/**
+ * Loader for the Grobid data. *
+ */
 object LoadGrobid extends XMLLoader{
   
   val formatType = GrobidFormat

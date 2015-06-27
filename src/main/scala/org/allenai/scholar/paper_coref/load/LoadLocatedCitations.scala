@@ -7,6 +7,11 @@ import org.allenai.scholar.paper_coref.data_structures.{LocatedCitation, ParsedP
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
+/**
+ * Loader for JSON serialized LocatedCitation data. 
+ * Note that data must be stored such that each JSON
+ * object appears on a single line.
+ */
 object LoadLocatedCitations extends Loader {
   
   override val formatType: FormatType = LocatedCitationFormat

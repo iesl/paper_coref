@@ -4,6 +4,9 @@ import org.allenai.scholar.paper_coref.data_structures.{Author, Date, RawCitatio
 
 import scala.xml.{Elem, NodeSeq}
 
+/**
+ * Loader for the RPP data
+ */
 object LoadRPP extends XMLLoader{
   
   val formatType = RPPFormat

@@ -6,13 +6,15 @@ import cc.factorie._
 
 import org.allenai.scholar.paper_coref.data_structures.{Date, PaperMention, ParsedPaper}
 
+/**
+ * Loader for the Cora dataset.  
+ */
 object LoadCora extends MentionLoader {
   override val formatType: FormatType = CoraFormat
 
   override def fromFile(file: File, codec: String): Iterable[ParsedPaper] = throw new UnsupportedOperationException("not supported at this time")
 
   override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] = throw new UnsupportedOperationException("not supported at this time")
-
 
   private val authorFinder = AlmostXMLTag("author")
   private val titleFinder = AlmostXMLTag("title")
@@ -42,17 +44,33 @@ object LoadCora extends MentionLoader {
 
 }
 
-
+/**
+ * Helper class for loading Cora. Uses regexes to match the XML like Cora formatting. 
+ * @param tagName - the name of the tag
+ */
 case class AlmostXMLTag(tagName: String) {
 
+  /**
+   * The regex that is used to find the value(s) for the tag. 
+   */
   val regex = s"<$tagName>(?:(?!<\\/$tagName>).)*<\\/$tagName>".r
 
   private val replacementRegex = s"<[\\/]*$tagName>"
 
+  /**
+   * Returns all of the values associated with this tag.
+   * @param almostXml - the string to extract values from
+   * @return - the values associated with the tag
+   */
   def getValues(almostXml: String): Iterable[String] = {
     regex.findAllIn(almostXml).map(_.replaceAll(replacementRegex, "").trim).toIterable
   }
 
+  /**
+   * Returns the first value associated with this tag.
+   * @param almostXML - the string to extract values from
+   * @return - the values associated with the tag.
+   */
   def getFirstValue(almostXML: String): Option[String] = {
     regex.findFirstIn(almostXML).map(_.replaceAll(replacementRegex, "").trim)
   }

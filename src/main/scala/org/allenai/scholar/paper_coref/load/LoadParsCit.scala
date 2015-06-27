@@ -5,6 +5,9 @@ import org.allenai.scholar.paper_coref.data_structures.RawCitation
 
 import scala.xml.{Elem, NodeSeq}
 
+/**
+ * Loader for ParsCit input data. * 
+ */
 object LoadParsCit extends XMLLoader{
 
   val formatType = ParsCitFormat
@@ -31,13 +34,14 @@ object LoadParsCit extends XMLLoader{
     if (citation.isEmpty) None else Some(citation)
   }
   
-  def mostConfidentValue(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
+  // To select the fields with the highest confidence
+  private def mostConfidentValue(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
    valuesWithConfidence(xml,field,confidenceFieldName,defaultValue).sortBy(-_._2).map(_._1).headOption
 
-  def valuesWithConfidence(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
+  private def valuesWithConfidence(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") =
     (xml \\ field).map((p) => (p.text.trim, (p \\ confidenceFieldName).map(_.text).headOption.getOrElse(defaultValue).toDouble))
   
-  def mostConfidentValues(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") = {
+  private def mostConfidentValues(xml: NodeSeq, field: String, confidenceFieldName: String = "@confidence", defaultValue: String = "0.0") = {
     val confidentValues = valuesWithConfidence(xml,field,confidenceFieldName,defaultValue)
     val maxConfidence = confidentValues.map(_._2).headOption.getOrElse(0.0)
     confidentValues.filter(_._2 == maxConfidence).map(_._1)

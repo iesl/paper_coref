@@ -6,15 +6,33 @@ import cc.factorie._
 import org.apache.commons.lang.StringEscapeUtils._
 
 /**
+ * Data structured used in evaluating the ACL experiment. 
  * @author John Sullivan
  */
 case class GoldCitationDoc(doc:PaperMetadataWithId, citations:Iterable[PaperMetadataWithId])
 
+/**
+ * Following the PaperMetadata data structure in Meta-Eval with the added field of the paper id.
+ * @param id - the paper id (typically ACL)
+ * @param title - the title of the paper
+ * @param venue - the venue
+ * @param year - year (four digit number)
+ * @param authors - the authors with the format: "lastname, firstname middlename"
+ */
 case class PaperMetadataWithId(id: String, title: String, venue: String,
                          year: Int, authors: List[String])
 
-object PaperMetadataWithId {
 
+/**
+ * Methods for loading PaperMetadataWithId data structures.
+ */
+object PaperMetadataWithId { //TODO: In the future, using JSON serialized formatting might be cleaner? - nm
+
+  /**
+   * Load PaperMetadataWithId from an input stream. 
+   * @param is - input stream
+   * @return PaperMetadataWithId objects
+   */
   def fromInputStream(is:InputStream):Iterable[PaperMetadataWithId] =
     new BufferedReader(new InputStreamReader(is)).toIterator.grouped(5).map {
       case Seq(idLine, authorLine, titleLine, venueLine, dateLine) =>
@@ -25,6 +43,11 @@ object PaperMetadataWithId {
           unescapeXml(trim("author", authorLine)).split(";").toList)
     }.toIterable
 
+  /**
+   * Load PaperMetadataWithId from a file
+   * @param filename
+   * @return
+   */
   def fromFile(filename:String):Iterable[PaperMetadataWithId] = fromInputStream(new FileInputStream(filename))
 
   // shamelessly yoinked from org.allenai.scholar.PaperMetadataFileParser
@@ -45,10 +68,3 @@ object PaperMetadataWithId {
   }
 }
 
-case class PaperMetadata(title: String, venue: String, year: Int, authors: List[String]) extends JSONSerializable
-
-object PaperMetadata {
-  
-  def fromRawCitation(rawCitation: RawCitation): PaperMetadata = PaperMetadata(rawCitation.rawTitle,rawCitation.venue,rawCitation.date.toIntSafe.getOrElse(0),rawCitation.rawAuthors)
-  
-}

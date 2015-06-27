@@ -5,10 +5,14 @@ import java.io._
 import cc.factorie._
 
 /**
+ * A simple representation of a citation link given two paper ids.  
  * @author John Sullivan
  */
 case class BareCitation(from:String, to:String)
 
+/**
+ * A few convenience methods for BareCitation
+ */
 object BareCitation {
 
   def fromInputStream(is:InputStream):Iterable[BareCitation] =

@@ -7,18 +7,39 @@ import org.json4s._
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.Serialization.read
 
+
+/**
+ * A representation of a paper mention used by the coreference algorithms. 
+ * @param id - a unique id for the mention
+ * @param authors - the authors of the paper 
+ * @param title - the title of the paper
+ * @param venue - the venue the paper appears in
+ * @param date - the date published
+ * @param trueLabel - the id of the gold clustering
+ * @param isPaper - true iff the paper was a header extraction
+ * @param goldData - the corresponding gold mention data
+ */
+
 case class PaperMention(id:String, authors:Set[String], title:String, venue:String, date:String, trueLabel:String, isPaper:Boolean, goldData:Option[PaperMention]) extends JSONSerializable
 
+/**
+ * Utilities for the PaperMention class  
+ */
 object PaperMention {
   implicit val formats = Serialization.formats(NoTypeHints)
 
+  /**
+   * Loads the PaperMention from JSON
+   * @param js - the json string
+   * @return - deserialized PaperMention
+   */
   def fromJsonString(js:String)= read[PaperMention](js)
 
   /**
-   * *
-   * @param predCitDocs - Mapping from paper ids to the parse paper objects 
+   * Creates a set of paper mentions by aligning extracted ParsedPaper objects using the edit distance between title fields.
+   * @param predCitDocs - Mapping from paper ids to the parsed paper objects
    * @param goldCitDocs - Mapping from paper ids to gold citation doc
-   * @return
+   * @return - paper mentions for coreferences.
    */
   def generate(predCitDocs:Map[String, ParsedPaper], goldCitDocs:Map[String, GoldCitationDoc]):Iterable[PaperMention] = {
     (predCitDocs.keySet intersect goldCitDocs.keySet).flatMap { k =>

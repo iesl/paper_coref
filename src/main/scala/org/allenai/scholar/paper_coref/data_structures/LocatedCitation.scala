@@ -5,76 +5,7 @@ import java.io._
 import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization
-import org.json4s.jackson.Serialization.{write, writePretty}
 
-// TODO: This has issues with EmptyValueStrategy
-trait JSONSerializable {
-  implicit val formats = Serialization.formats(NoTypeHints)
-  def toJSON: String = write(this)
-  def toJSONFormatted: String = writePretty(this)
-}
-
-object JSONSerializable {
-
-  def writeJSON(citations: Iterator[JSONSerializable], file: File, codec: String = "UTF-8", bufferSize: Int = 10) = {
-    val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), codec))
-    val citationStrings = citations.map(_.toJSON)
-    if (citationStrings.hasNext)
-      writer.write(citationStrings.next())
-    if (citationStrings.hasNext)
-      citationStrings.grouped(bufferSize).foreach {
-        group =>
-          group.foreach {
-            citation =>
-              writer.newLine()
-              writer.write(citation)
-          }
-          writer.flush()
-      }
-  }
-}
-
-object ParsedPaper {
-  def fromCitations(cits:Iterable[LocatedCitation]):ParsedPaper = {
-    assert(cits.count(_.paperId.isDefined) == 1)
-    ParsedPaper(cits.filter(_.paperId.isDefined).head, cits.filterNot(_.paperId.isDefined))
-  }
-  def fromCitationsSafe(cits:Iterable[LocatedCitation]): Option[ParsedPaper] = {
-    if (cits.count(_.paperId.isDefined) == 1)
-      Some(ParsedPaper(cits.filter(_.paperId.isDefined).head, cits.filterNot(_.paperId.isDefined)))
-    else 
-      None
-  }
-}
-
-/**
- * A ParsedPaper is representation of a scientific paper, it is represented by a LocatedCitation of the paper itself and
- * * a collection of LocatedCitations for the papers cited by the paper. The fields of a ParsedPaper:
- * @param self - The reference representing the paper itself
- * @param bib - The papers referenced in this paper
- */
-case class ParsedPaper(self:LocatedCitation, bib:Iterable[LocatedCitation]) extends JSONSerializable{
-  override def toString = s"(ParsedPaper(${self.paperId.getOrElse("UnknownId")}), self: ${self.toString}, bib: ${bib.map(_.toString).mkString(", ")})"
-  def toPaperMetadata: Iterable[PaperMetadata] = (Iterable(self) ++ bib).map(_.rawCitation).map(PaperMetadata.fromRawCitation)
-}
-
-/**
- *A RawCitation is a representation of a paper. It could either be the header of a paper or an entry in the reference section of the paper. The fields of a RawCitation are:
- * @param rawTitle - The title of the paper exactly in the way it was extracted from the PDF
- * @param rawAuthors - A list of authors. The author names are not structured, e.g. first and last names are not annotated or differentiated
- * @param date - The date exactly in the way it was extracted from the PDF, e.g. without formatting
- * @param venue - The venue the paper appeared in.
- */
-case class RawCitation(rawTitle:String, rawAuthors:List[String], date:String, venue: String) {
-  override def toString = s"(RawCitation, rawTitle: $rawTitle, rawAuthors: ${rawAuthors.mkString(", ")}, date: $date, venue: $venue)"
-  def isEmpty: Boolean = rawTitle.isEmpty && rawAuthors.isEmpty && date.isEmpty && venue.isEmpty
-}
-
-object RawCitation {
-  def apply(rawTitle:String, rawAuthors:List[String], date:String): RawCitation = RawCitation(rawTitle,rawAuthors,date,"")
-  def fromPaperMetadata(paperMetadata: PaperMetadata) = RawCitation(paperMetadata.title,paperMetadata.authors,paperMetadata.year.toString,paperMetadata.venue)
-}
 
 /**
  * A LocatedCitation represents a "mention" of a paper. It is a RawCitation that also contains either the unique id of the paper represented by the "mention" or the unique id of the paper which contains this citation in its reference.
@@ -88,14 +19,27 @@ case class LocatedCitation(rawCitation:RawCitation, citingPaperId:Option[String]
   def isEmpty: Boolean = rawCitation.isEmpty
 }
 
+/**
+ * Methods for loading located citations 
+ */
 object LocatedCitation {
 
   implicit val formats = DefaultFormats
 
+  /**
+   * Load the located citations from an input stream  
+   * @param is - the input stream
+   * @return located citations
+   */
   def fromInputStream(is:InputStream):Iterable[LocatedCitation] =
     new BufferedReader(new InputStreamReader(is)).toIterator.map{ line =>
       parse(line).extract[LocatedCitation]
   }.toIterable
 
+  /**
+   * Load the citations from the file
+   * @param filename - the file to load from
+   * @return located citations
+   */
   def fromFile(filename:String):Iterable[LocatedCitation] = fromInputStream(new FileInputStream(filename))
 }

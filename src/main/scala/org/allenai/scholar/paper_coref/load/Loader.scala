@@ -76,10 +76,15 @@ trait Loader {
    * @return - a parsed paper or None if it could not be loaded.
    */
   def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String = "UTF-8"): Option[ParsedPaper]
-  
+
+  /**
+   * Loads parsed papers from a collection of headers and references file pairs.
+   * @param headersAndReferences - header and reference file pairs
+   * @param codec - the encoding
+   * @return - the parsed paper from the given files
+   */
   def fromSeparateFiles(headersAndReferences: Iterable[(File,File)], codec: String = "UTF-8"): Iterable[ParsedPaper] = {
     val numFiles = headersAndReferences.size
-    println(s"[Loader] Loading from ${numFiles}")
     val errors = new ArrayBuffer[String]()
     val res = headersAndReferences.zipWithIndex.flatMap{case (p,idx) =>
       print(s"\r[Loader] Loading from ${p._1.getName} and ${p._2.getName} (Loaded: ${idx+1}/$numFiles, Num Errors: ${errors.length}).")

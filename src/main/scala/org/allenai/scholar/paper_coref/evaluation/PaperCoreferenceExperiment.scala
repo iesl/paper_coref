@@ -96,12 +96,20 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
     corefs)
 
 
+  /**
+   * Alternate constructor. Takes as input an iterable of ParsedPapers and the gold data filenames.
+   * @param parsedPapers - ParsedPaper extractions
+   * @param codec - the encoding of the gold data files
+   * @param goldMetaDataFilename - the meta data file
+   * @param goldCitationsFilename - the citation edges file
+   * @param corefs - the coref algorithms
+   */
   def this(parsedPapers: Iterable[ParsedPaper], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
     this(parsedPapers,PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
 
     /**
-   * Loads data from givne arguments and uses other constructor to create experiment.
+   * Loads data from given arguments and uses other constructor to create experiment.
    * @param loader - the loader to use
    * @param citationFiles - the files to load ParsedPapers from
    * @param codec - the encoding of the files

@@ -14,7 +14,7 @@ class WriteExtractionsToJSONOpts extends DefaultCmdOptions {
   val compact = new CmdOption[Boolean]("compact", false, "BOOLEAN", "Whether or not to use the compact JSON format. Default false")
 }
 
-object WriteExtractionsToJSON {
+object WriteExtractionsToParsedPaperJSON {
 
   def main(args: Array[String]): Unit = {
     val opts = new WriteExtractionsToJSONOpts

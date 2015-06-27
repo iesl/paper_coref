@@ -109,19 +109,6 @@ object PaperCoreferenceExperiment {
       val writer1 = new PrintWriter(new File(outputDir, "results.txt"), "UTF-8")
       writer1.println(result.map( (x) => x._1 + ":\n" + x._2 + "\n\n").mkString("--------------------------------------------\n\n"))
       writer1.close()
-
-      corefs.foreach {
-        coref =>
-          val predictedHtml = HTMLReport.generateHTML(experiment.predictedClustering(coref.name).get, Some(s"Predicted - ${coref.name}"))
-          val writer = new PrintWriter(new File(outputDir, coref.name + ".html"), "UTF-8")
-          writer.println(predictedHtml)
-          writer.close()
-      }
-
-      val goldHTML = HTMLReport.generateHTML(experiment.goldClustering, Some("Gold Clustering"))
-      val writer2 = new PrintWriter(new File(outputDir, "gold.html"), "UTF-8")
-      writer2.println(goldHTML)
-      writer2.close()
     }
   }
 }

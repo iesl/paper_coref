@@ -23,5 +23,5 @@ object LoadParsedPaper extends Loader {
     parse(line).extract[ParsedPaper]
   }.toIterable
 
-  override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] = throw new UnsupportedOperationException
+  override def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] = throw new UnsupportedOperationException
 }

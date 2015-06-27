@@ -95,7 +95,12 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
     },
     corefs)
 
-  /**
+
+  def this(parsedPapers: Iterable[ParsedPaper], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
+    this(parsedPapers,PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
+  }
+
+    /**
    * Loads data from givne arguments and uses other constructor to create experiment.
    * @param loader - the loader to use
    * @param citationFiles - the files to load ParsedPapers from
@@ -107,5 +112,4 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
   def this(loader: Loader, citationFiles: Iterable[File], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
     this(loader.fromFiles(citationFiles,codec),PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
-  
 }

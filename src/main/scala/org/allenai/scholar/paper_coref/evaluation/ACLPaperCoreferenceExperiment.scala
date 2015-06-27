@@ -1,18 +1,20 @@
 package org.allenai.scholar.paper_coref.evaluation
 
-import java.io.{PrintWriter, FileReader, BufferedReader, File}
+import java.io.{File, PrintWriter}
 
-import cc.factorie._
 import cc.factorie.util.DefaultCmdOptions
+import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.PaperCoref
-import org.allenai.scholar.paper_coref.load.{Loader, FormatType}
+import org.allenai.scholar.paper_coref.load.{FormatType, Loader}
 
 /**
  * Command line options for the paper coreference experiment on ACL data 
  */
 class ACLPaperCoreferenceExperimentOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
-  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", false)
+  val headers = new CmdOption[List[String]]("headers", "Either a directory of files, a filename of files, or a list of files containing header information", false)
+  val references = new CmdOption[List[String]]("references", "Either a directory of files, a filename of files, or a list of files containing reference information", false)
   val inputType = new CmdOption[String]("input-type", "Directory, file of filenames, file", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val output = new CmdOption[String]("output", "A directory in which to write output to (optional)", false)
@@ -30,24 +32,24 @@ object ACLPaperCoreferenceExperiment {
     val opts = new ACLPaperCoreferenceExperimentOpts
     opts.parse(args)
 
-
     val formatType = FormatType(opts.formatType.value)
-
-    val citationFiles: Iterable[File] =
-      opts.input.value.flatMap((f) =>
-        if (opts.inputType.value.equalsIgnoreCase("directory"))
-          new File(opts.input.value.head).listFiles()
-        else if (opts.inputType.value.equalsIgnoreCase("file of filenames")) {
-          new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
-        } else if (opts.inputType.value.equalsIgnoreCase("file")) {
-          Iterable(new File(f))
-        } else
-          throw new Exception(s"Unknown input type: ${opts.inputType.value}. Must be: directory,file of filenames, file")
-      )
-
     val loader = Loader(formatType)
     val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)
-    val experiment = new PaperCoreferenceExperiment(loader,citationFiles,opts.inputEncoding.value,opts.goldPaperMetaData.value,opts.goldCitationEdges.value,corefs)
+    
+    assert((opts.input.wasInvoked || (opts.headers.wasInvoked && opts.references.wasInvoked)) && !(opts.input.wasInvoked && opts.headers.wasInvoked && opts.references.wasInvoked), "Either input or headers and references must be specified.")
+
+    val experiment = {
+      if (opts.input.wasInvoked) {
+        val citationFiles: Iterable[File] = parseExperimentInput(opts.input.value,opts.inputType.value)
+        new PaperCoreferenceExperiment(loader, citationFiles, opts.inputEncoding.value, opts.goldPaperMetaData.value, opts.goldCitationEdges.value, corefs)
+      } else {
+        val headers = parseExperimentInput(opts.headers.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
+        val references = parseExperimentInput(opts.references.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
+        val joined = headers.keySet.intersect(references.keySet).flatMap(fid => headers(fid).zip(references(fid))).toList
+        new PaperCoreferenceExperiment(loader.fromSeparateFiles(joined,opts.inputEncoding.value),opts.inputEncoding.value, opts.goldPaperMetaData.value, opts.goldCitationEdges.value, corefs)
+      }
+    }
+
     val result = experiment.run()
     if (opts.output.wasInvoked) {
       val outputDir = new File(opts.output.value)

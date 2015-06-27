@@ -30,7 +30,7 @@ object LoadPaperMetadata extends Loader {
     }
   }
 
-  override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  throw new UnsupportedOperationException
+  override def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  throw new UnsupportedOperationException
 
   private def getPaperMetadata(file:File,codec:String):Iterable[PaperMetadata] =
     new BufferedReader(new InputStreamReader(new FileInputStream(file),codec)).toIterator.map{ line =>

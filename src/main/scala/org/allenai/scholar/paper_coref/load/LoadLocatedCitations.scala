@@ -21,7 +21,7 @@ object LoadLocatedCitations extends Loader {
   override def fromFile(file: File, codec: String): Iterable[ParsedPaper] =
     getLocatedCitations(file,codec).groupBy(_.foundInId).map(_._2).flatMap(ParsedPaper.fromCitationsSafe)
 
-  override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  {
+  override def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  {
     val headers = getLocatedCitations(headerFile,codec)
     if (headers.size > 1)
       println(s"[LoadLocatedCitations] WARNING: The file ${headerFile.getName} has more than one LocatedCitation. The first one will be used as the header.")
@@ -39,5 +39,6 @@ object LoadLocatedCitations extends Loader {
     new BufferedReader(new InputStreamReader(new FileInputStream(file),codec)).toIterator.map{ line =>
       parse(line).extract[LocatedCitation]
     }.toIterable
+  
   
 }

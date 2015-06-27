@@ -14,7 +14,7 @@ object LoadCora extends MentionLoader {
 
   override def fromFile(file: File, codec: String): Iterable[ParsedPaper] = throw new UnsupportedOperationException("not supported at this time")
 
-  override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] = throw new UnsupportedOperationException("not supported at this time")
+  override def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] = throw new UnsupportedOperationException("not supported at this time")
 
   private val authorFinder = AlmostXMLTag("author")
   private val titleFinder = AlmostXMLTag("title")

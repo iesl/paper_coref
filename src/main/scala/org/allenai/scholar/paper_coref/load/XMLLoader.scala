@@ -25,7 +25,7 @@ trait XMLLoader extends Loader {
       Iterable.empty
   }
 
-  def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String = "UTF-8"): Option[ParsedPaper] = {
+  def fromSeparateHeaderAndReferenceFile(headerFile: File, referencesFile: File, codec: String = "UTF-8"): Option[ParsedPaper] = {
     assert(headerFile.getNameWithoutExtension == referencesFile.getNameWithoutExtension)
     val paperId = headerFile.getNameWithoutExtension
     val headerCitation = loadHeader(NonValidatingXML.load(new InputStreamReader(new FileInputStream(headerFile), codec))).map(LocatedCitation(_, None, Some(paperId)))

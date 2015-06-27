@@ -19,7 +19,7 @@ target/paper_coref-1.0-SNAPSHOT-jar-with-dependencies.jar
 Usage
 ------
 
-The docs folder provides an overview of the usage of this project. For running coreference experiments on existing data sets please see: [docs/usage/coreference/acl_paper_coreference.md](docs/usage/coreference/acl_paper_coreference.md) and  docs/usage/coreference/cora_paper_coreference.md . For information on how to run paper coreference on a new set of data, please see [docs/usage/coreference/coreference_overview.md](docs/usage/coreference/coreference_overview.md)
+The docs folder provides an overview of the usage of this project. For running coreference experiments on existing data sets please see: [doc/usage/coreference/acl_paper_coreference.md](doc/usage/coreference/acl_paper_coreference.md) and  [doc/usage/coreference/cora_paper_coreference.md](doc/usage/coreference/cora_paper_coreference.md). For information on how to run paper coreference on a new set of data, please see [doc/usage/coreference/coreference_overview.md](doc/usage/coreference/coreference_overview.md)
 
 Results
 -------

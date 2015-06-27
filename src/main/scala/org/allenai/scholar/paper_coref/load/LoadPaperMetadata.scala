@@ -8,7 +8,7 @@ import org.json4s.jackson.JsonMethods._
 import cc.factorie._
 import org.allenai.scholar.paper_coref._
 
-class LoadPaperMetadata extends Loader {
+object LoadPaperMetadata extends Loader {
   override val formatType: FormatType = PaperMetaDataFormat
   
   implicit val formats = DefaultFormats
@@ -17,11 +17,12 @@ class LoadPaperMetadata extends Loader {
     val rawCitations = getPaperMetadata(file,codec).map(RawCitation.fromPaperMetadata)
     if (rawCitations.size >= 1) {
       val id = file.getNameWithoutExtension
-      val self = LocatedCitation(rawCitations.head,Some(id),None)
-      val cits = rawCitations.drop(1).map(LocatedCitation(_,None,Some(id)))
+      val self = LocatedCitation(rawCitations.head,None,Some(id))
+      val cits = rawCitations.drop(1).map(LocatedCitation(_,Some(id),None))
       ParsedPaper.fromCitationsSafe(Iterable(self) ++ cits)
-    } else 
+    } else {
       Iterable.empty
+    }
   }
 
   override def fromSeparateFiles(headerFile: File, referencesFile: File, codec: String): Option[ParsedPaper] =  throw new UnsupportedOperationException

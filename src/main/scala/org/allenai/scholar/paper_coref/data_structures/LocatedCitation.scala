@@ -6,7 +6,7 @@ import cc.factorie._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import org.json4s.jackson.Serialization
-import org.json4s.jackson.Serialization.{write,writePretty}
+import org.json4s.jackson.Serialization.{write, writePretty}
 
 // TODO: This has issues with EmptyValueStrategy
 trait JSONSerializable {

@@ -1,6 +1,6 @@
 package org.allenai.scholar.paper_coref.evaluation
 
-import java.io.{BufferedReader, File, FileReader, PrintWriter}
+import java.io._
 import java.util
 
 import cc.factorie._
@@ -70,6 +70,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
 class PaperCoreferenceExperimentOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val inputType = new CmdOption[String]("input-type", "Directory, file of filenames, file", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val output = new CmdOption[String]("output", "A directory in which to write output to (optional)", false)
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
@@ -86,14 +87,17 @@ object PaperCoreferenceExperiment {
     
     val formatType = FormatType(opts.formatType.value)
 
-    val citationFiles: Iterable[File] =  if (opts.input.value.length == 1) {
-      if (new File(opts.input.value.head).isDirectory)
-        new File(opts.input.value.head).listFiles()
-      else
-        new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
-    } else {
-      opts.input.value.map(new File(_))
-    }
+    val citationFiles: Iterable[File] =
+      opts.input.value.flatMap((f) =>
+        if (opts.inputType.value.equalsIgnoreCase("directory"))
+          new File(opts.input.value.head).listFiles()
+        else if (opts.inputType.value.equalsIgnoreCase("file of filenames")) {
+          new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
+        } else if (opts.inputType.value.equalsIgnoreCase("file")) {
+          Iterable(new File(f))            
+        } else 
+          throw new Exception(s"Unknown input type: ${opts.inputType.value}. Must be: directory,file of filenames, file")
+      )
 
     val loader = Loader(formatType)
     val corefs = opts.corefAlgorithms.value.map(PaperCoref.apply)    

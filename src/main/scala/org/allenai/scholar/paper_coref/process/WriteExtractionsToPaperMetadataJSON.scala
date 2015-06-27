@@ -11,7 +11,8 @@ class WriteExtractionsToPaperMetadataJSONOpts extends DefaultCmdOptions {
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val output = new CmdOption[String]("output", "A file to write the output to (optional)", false)
-  val compact = new CmdOption[Boolean]("compact", false, "BOOLEAN", "Whether or not to use the compact JSON format. Default false")
+  val outputEncoding = new CmdOption[String]("output-encoding", "UTF-8", "CODEC", "The encoding of the output files")
+  val compact = new CmdOption[Boolean]("compact", true, "BOOLEAN", "Whether or not to use the compact JSON format. Default false")
 }
 
 object WriteExtractionsToPaperMetadataJSON {
@@ -35,9 +36,9 @@ object WriteExtractionsToPaperMetadataJSON {
     val papers = loader.fromFiles(citationFiles)
     papers.map((c) => (c.self.foundInId,c.toPaperMetadata)).foreach{
       case (paperId,paper) =>
-        val pw = new PrintWriter(new File(opts.output.value, paperId + ".json"))
+        val pw = new PrintWriter(new File(opts.output.value, paperId + ".json"),opts.outputEncoding.value)
         if (opts.compact.value)
-          paper.foreach( (p) => pw.print(p.toJSON))
+          paper.foreach( (p) => pw.println(p.toJSON))
         else
           paper.foreach( (p) => pw.print(p.toJSONFormatted))
         pw.close()

@@ -40,7 +40,7 @@ trait Loader {
 
 
 object Loader {
-  private val allLoaders = Iterable(LoadGrobid,LoadParsCit,LoadRPP).map((ldr) => ldr.formatType -> ldr).toMap[FormatType,Loader]
+  private val allLoaders = Iterable(LoadGrobid,LoadParsCit,LoadRPP,LoadCora,LoadLocatedCitations,LoadPaperMetadata,LoadCora).map((ldr) => ldr.formatType -> ldr).toMap[FormatType,Loader]
   def apply(formatType: FormatType) = allLoaders(formatType)
   def apply(string: String) = allLoaders(FormatType(string))
 }

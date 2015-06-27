@@ -7,7 +7,7 @@ import org.allenai.scholar.paper_coref.data_structures.{LocatedCitation, ParsedP
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
-class LoadLocatedCitations extends Loader {
+object LoadLocatedCitations extends Loader {
   
   override val formatType: FormatType = LocatedCitationFormat
 

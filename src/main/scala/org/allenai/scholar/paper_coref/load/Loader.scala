@@ -109,7 +109,7 @@ trait Loader {
 object Loader {
   
   // All of the loaders in the system
-  private val allLoaders = Iterable(LoadGrobid,LoadParsCit,LoadRPP,LoadCora,LoadLocatedCitations,LoadPaperMetadata,LoadCora).map((ldr) => ldr.formatType -> ldr).toMap[FormatType,Loader]
+  private val allLoaders = Iterable(LoadGrobid,LoadParsCit,LoadRPP,LoadLocatedCitations,LoadPaperMetadata,LoadCora).map((ldr) => ldr.formatType -> ldr).toMap[FormatType,Loader]
 
   /**
    * Given the formatType return the loader which is known to load that type. 

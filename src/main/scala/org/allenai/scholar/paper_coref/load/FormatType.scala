@@ -40,13 +40,6 @@ case object LocatedCitationFormat extends FormatType {
   val name = "LocatedCitation"
 }
 
-/**
- * JSON formatted ParsedPaper data using compact (1-line per object) JSON format. 
- * TODO: I think this is not supported?  
- */
-case object ParsedPaperFormat extends FormatType {
-  val name = "ParsedPaper"
-}
 
 /**
  * JSON formatted PaperMetaData data using compact (1-line per object) JSON format. 
@@ -68,7 +61,7 @@ case object CoraFormat extends FormatType {
 object FormatType {
 
   // Listing of all known format types
-  private val allFormatTypes = Iterable(RPPFormat,GrobidFormat,ParsCitFormat,LocatedCitationFormat,ParsedPaperFormat,PaperMetadataFormat,CoraFormat).map( (ft) => ft.name -> ft).toMap
+  private val allFormatTypes = Iterable(RPPFormat,GrobidFormat,ParsCitFormat,LocatedCitationFormat,PaperMetadataFormat,CoraFormat).map( (ft) => ft.name -> ft).toMap
 
   /**
    * Given the string version of a format type, produce the associated object

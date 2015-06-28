@@ -1,5 +1,9 @@
 # Coreference #
 
+## Running Experiments ##
+See:
+- [ACL](acl_paper_coreference.md)
+- [Cora](cora_paper_coreference.md)
 
 ## PaperCoref Interface ##
 
@@ -40,3 +44,5 @@ The resulting clustering of the coreference algorithms can be accessed by using 
 def predictedClusteringResults: Map[String,Iterable[Iterable[PaperMention]]
 def predictedClustering(corefAlgName: String): Iterable[Iterable[PaperMention]]
 ```
+
+

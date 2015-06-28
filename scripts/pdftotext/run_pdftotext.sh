@@ -1,6 +1,6 @@
 #!/bin/bash
-inputdir=${1:-"/iesl/canvas/nmonath/grant_work/ai2/data/acl/"}
-outputdir=${2:-"/iesl/canvas/nmonath/grant_work/ai2/data/pdftotext-acl-processed"}
+inputdir=$1
+outputdir=$2
 
 
 echo "==========================================================================="

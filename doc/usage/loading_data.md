@@ -39,7 +39,7 @@ Each __Loader__ has an associated __FormatType__ which specifies how the data is
 | PaperMetadata | PaperMetadataFormat | LoadPaperMetadata |
 
 
-For more information on how __LoadGrobid__, __LoadParsCit__ and __LoadRPP__ convert the respective XML schemas to the paper coreference data structures. Please see (schema mapping documentation)[doc/schema_mapping].
+For more information on how __LoadGrobid__, __LoadParsCit__ and __LoadRPP__ convert the respective XML schemas to the paper coreference data structures. Please see [schema mapping documentation](../schema_mapping).
  
-For more information on the __RawCitation__, __ParsedPaper__ and other data structures see (coreference data structures)[doc/usage/data_structures.md].
+For more information on the __RawCitation__, __ParsedPaper__ and other data structures see [coreference data structures](data_structures.md).
 

@@ -65,8 +65,8 @@ The remaining mentions are then entered into the coreference algorithm. The core
 | Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
 | ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
 January System | Ai2 | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
-"Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
-"AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
+"Baseline" | pdftotext + Parscit | 97.239 | 58.204 | 72.820 | 97.706 | 76.276 | 85.672 | 97.651 | 62.002 | 75.846 |
+"AlphaOnly" | pdftotext + Parscit | 97.733 | 52.980 | 68.712 | 97.623 |  66.773 | 79.304 | 97.909 | 52.345 | 68.218 |
 "Baseline" | Grobid | 98.756 | 73.653 | 84.377 | 99.142 | 84.938 | 91.492 | 98.718 | 74.537 | 84.940 |
 "AlphaOnly" | Grobid | 98.908 | 69.017 | 81.302 | 99.172 | 82.271 | 89.935 | 98.796 | 70.126 | 82.028 |
 
@@ -74,3 +74,4 @@ January System | Ai2 | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.
  Note that slightly different results will be obtained whether the single-file grobid \& parscit data is used or the separate header and reference files. This is likely due to differences in where XML is malformed in the files.
 
 Note that the system also accepts RPP input and runs end-to-end on RPP data. However, as RPP is still under development, the results using RPP were not ready to report.
+

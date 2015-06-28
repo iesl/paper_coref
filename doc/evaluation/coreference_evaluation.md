@@ -1,8 +1,4 @@
-# Coreference Evaluation #
-
-## Overview ##
-
-The paper coreference algorithm takes as input a collection of paper "mentions," which are ambiguous references to a research paper. These mentions are extracted headers and reference citations from papers. The goal of paper coreference is to group the mention by the paper to which they refer.
+# ACL Paper Coreference #
 
 ## Data set ##
 
@@ -36,9 +32,9 @@ year = {2010}
 
 First, the PDFs of the ACL data set are processed and converted into a structured representation (in this case XML) using one of the following methods: 
  
- 1. PDF => IESL-PDF-To-Text => Research Paper Processor (RPP) => XML Output (RPP's schema)
- 2. PDF => Grobid => XML Output (Grobid/TEI schema)
- 3. PDF => pdftotext (linux) => ParsCit => XML Output (ParsCit Specific format)
+ - PDF => IESL-PDF-To-Text => Research Paper Processor (RPP) => XML Output (RPP's schema)
+ - PDF => Grobid => XML Output (Grobid/TEI schema)
+ - PDF => pdftotext (linux utility) => ParsCit => XML Output (ParsCit Specific format)
  
 ### Schema Mapping ###
  
@@ -56,9 +52,6 @@ In order to evaluate the coreference output, each extracted mention must be alig
  
 The remaining mentions are then entered into the coreference algorithm. The coreference algorithm produces a clustering of the mentions (without using the gold labels of course). This predicted clustering of mentions can then be evaluated against the gold labeling determined in the previous step.
 
-### Evaluation ###
- 
-The Pairwise, MUC and B3 metrics are used to evaluate the clustering.  TODO: Provide clear definition of each of these.
 
 ### Results ###
 

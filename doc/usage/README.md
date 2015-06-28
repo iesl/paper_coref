@@ -11,7 +11,7 @@ An overview of the data structures used in this project for coreference and thro
  
 ## Coreference ##
 
-A general overview of the coreference code is [here](coreference/coreference_overview.md). There are also guides to running [ACL paper coreference](coreference/acl_paper_coreference.md) and [Cora paper coreference](coreference/cora_paper_coreference.md). Additional metrics about the paper mention extractions used in coreference can also be generated, for more information see [citation metrics](coreference/citation_metrics.md)
+A general overview of the coreference code is [here](coreference/README.md). There are also guides to running [ACL paper coreference](coreference/acl_paper_coreference.md) and [Cora paper coreference](coreference/cora_paper_coreference.md). Additional metrics about the paper mention extractions used in coreference can also be generated, for more information see [citation metrics](coreference/citation_metrics.md)
 
 ## Serializing Data ##
 

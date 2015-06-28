@@ -68,11 +68,11 @@ echo export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(pwd)/crfpp/.libs/ >> ~/.bashrc
 
 ## Installing perl libraries ##
 
-The version of perl on blake does not have all of the dependencies necessary to run ParsCit and so we need to install them. However, since we do not have root priviledges, we need to use the perl package ``local::lib`` which allows us to install dependencies to your account. 
+If the version of perl does not have all of the dependencies necessary to run ParsCit, we need to install them. However, often we do not have root priviledges, so we need to use the perl package ``local::lib`` which allows us to install dependencies to your account. 
 
 ### Perl Version ###
 
-The version of perl we recommend using is installed on blake at: ```/opt/perl/bin/perl5.14.2```
+The version of perl we used was ```perl5.14.2```
 
 ### local::lib ##
 
@@ -110,7 +110,7 @@ For additional details on installing local::lib see: http://search.cpan.org/~haa
 
 ### Dependencies ###
 
-We must have the following dependencies installed:
+We had  the following dependencies installed:
   - Class::Struct
   - Getopt::Long
   - Getopt::Std
@@ -125,7 +125,7 @@ We must have the following dependencies installed:
   - __XML::Writer__
   - __XML::Writer::String__
  
-It appears that the non-__bold__ face dependencies are already installed on blake, we need to install the __bolded__ dependencies. You can double check that they are installed by doing 
+It appears that the non-__bold__ face dependencies were already installed, we need to install the __bolded__ dependencies. You can double check that they are installed by doing
 
 ```
 /opt/perl/bin/perldoc -l <name>

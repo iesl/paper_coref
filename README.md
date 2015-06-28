@@ -33,7 +33,7 @@ New Additions (June 2015)
 Usage
 ------
 
-The [doc](doc/) folder provides an overview of the usage of this project. For running coreference experiments on existing data sets please see: [ACL paper coreference guide](doc/usage/coreference/acl_paper_coreference.md) and  [Cora paper coreference guide](doc/usage/coreference/cora_paper_coreference.md). For information on how to run paper coreference on a new set of data, please see [coreference overview](doc/usage/coreference/coreference_overview.md)
+The [doc](doc/usage) folder provides an overview of the usage of this project. For running coreference experiments on existing data sets please see: [ACL paper coreference guide](doc/usage/coreference/acl_paper_coreference.md) and  [Cora paper coreference guide](doc/usage/coreference/cora_paper_coreference.md). For information on how to run paper coreference on a new set of data, please see [coreference overview](doc/usage/coreference/coreference_overview.md)
 
 For more information on the general system design see: [system overview](doc/usage/overview.md).
 

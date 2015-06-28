@@ -6,8 +6,7 @@
 The Cora dataset can be obtained from here: http://people.cs.umass.edu/~mccallum/data/cora-refs.tar.gz . It consists of 1879 paper mentions referring to 192 papers. The mentions were human annotated; this annotation is used for evaluation. 
 
 
-## Results ## 
-
+## Results ##
 
 | Coref System | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
 | -----------  | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |

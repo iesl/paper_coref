@@ -12,13 +12,7 @@ The __Pairwise__ evaluation metric has the following definitions of true positiv
 
 ```
 TP = SUM_{m in Mentions} | PredictedCluster(m) intersect GoldCLuster(m) |
-```
-
-```
 FP = SUM_{m in Mentions} | PredictedCluster(m) setdiff GoldCLuster(m) |
-```
-
-```
 FN = SUM_{m in Mentions} | GoldCLuster(m) setdiff PredictedCluster(m) |
 ```
  
@@ -26,21 +20,37 @@ Precision, recall and F1 are then defined in the standard way:
 
 ```
 precision = TP / (TP + FP)
-```
-
-```
 recall = TP / (TP + FN)
-```
-
-```
 F1 = 2 * ((precision * recall) / (precision + recall))
 ```
 
 ### MUC ###
 
+The __MUC__ evaluation metric defines precision and recall in the following way:
 
-TODO
+
+```
+NumMentions(cluster) = the number of mentions in the given cluster
+NumTrueEntities(cluster) = given a cluster of mentions, this gives the number of entities referred to by the mentions according to the ground truth labeling.
+NumPredictedEntities(cluster) = given a cluster of mentions, this gives the number of entities referred to by the mentions according to the predicted truth labeling.
+```
+
+```
+precision_numerator = sum_{c in predicted clusters} (NumMentions(c) - NumTrueEntities(c))
+precision_denominator = sum_{c in predicted clusters} (NumMentions(c) - 1)
+precision = precision_numerator / precision_denominator
+```
+
+```
+recall_numerator = sum_{c in true clusters} (NumMentions(c) - NumPredictedEntities(c))
+recall_denominator = sum_{c in true clusters} (NumMentions(c) - 1)
+```
 
 ### B Cubed ###
 
-TODO
+The _B Cubed_ evaluation metric defines precision and recall in the following way. See [this blog post](http://brenocon.com/blog/2013/08/probabilistic-interpretation-of-the-b3-coreference-resolution-metric/) for a detailed explanation.
+
+```
+precision = (1 / numMentions) sum_{m in Mentions} ( | PredictedCluster(m) intersect GoldCluster(m) | / | PredictedCluster(m) |)
+recall = (1 / numMentions) sum_{m in Mentions} ( | PredictedCluster(m) intersect GoldCluster(m) | / | GoldCluster(m) |)
+```

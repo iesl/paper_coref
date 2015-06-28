@@ -12,7 +12,7 @@ java -Xmx4G -cp target/paper_coref-1.0-SNAPSHOT-jar-with-dependencies.jar org.al
 
 The program uses factorie's command line argument utility. Using the argument ```--config``` allows the user to place command line arguments into the text file given as argument to ```config```.
 
-The command line arguments specify which files to use as input to the program, the format of these files, which coref algorithm to use etc.
+The command line arguments specify which files to use as input to the program, the format of these files, which coref algorithm to use, etc.
 
 Depending on the type of input, ```<config-file>```, a text file, might have the form: 
 
@@ -42,7 +42,7 @@ or
 
 ## Input Data ##
 
-Data can either be of the format of one file, containing both header and reference information, per paper or two separate files (one for the header, one for the references) per paper. 
+Data can either be in the format of one file (containing both header and reference information) per paper or two separate files (one for the header, one for the references) per paper. 
 
 To use the data with one file containing both header and reference information use the command line argument: 
 
@@ -58,7 +58,7 @@ To use data with two separate files one for the header, one for the references u
 ```
 
 
-The arguments of these command line arguments can be a variety of formats: directories, file of filenames, or files. The format is specified as:
+The arguments of these command line arguments can be a variety of formats: directories, file of filenames, or files. The type is specified as:
 
 ```
 --input-type=directory
@@ -69,7 +69,7 @@ or
 
 ## Format Type ##
 
-The input data may be the XML formatted output of ParsCit, Grobid or RPP. Alternatively serialized JSON versions of the data structures __LocatedCitation__ and the __PaperMetaData__ may be used as input.
+The input data may be the XML formatted output of ParsCit, Grobid or RPP. Alternatively serialized JSON versions of the data structures __LocatedCitation__ and the __PaperMetaData__ may be used as input. See [serialization documentation](doc/usage/serialization/serialization.md) for more information.
 
 The format of the input data is specified as a command line argument, ```--format-type```. Each of the possible input types has an associated string for the value of this argument:
 
@@ -83,7 +83,7 @@ The format of the input data is specified as a command line argument, ```--forma
 
 ### XML Formats ###
 
-The XML formats assume that each paper's XML data is stored in a single file with the ACL paper id as the base part of the filename. Any additional file extensions are fine. 
+The XML formats assume that the ACL paper id is the base part of the filename. Any additional file extensions are fine. For instance, valid filenames would be ```E14-1025.xml, E14-1025.tagged.xml, E14-1025.header.xml.tagged, etc```
 
 ### LocatedCitation ###
 
@@ -91,7 +91,7 @@ The input format to the system delivered in January was a JSON file of LocatedCi
 
 ### PaperMetadata ###
 
-The __PaperMetadata__ data structure in this project follows the same schema as the PaperMetadata data structure in the Meta-Eval project. This project does not depend on Meta-Eval and so uses a parallel version of the data structure. JSON serialized versions of this data structure may also be used as input. The input must be a directory of files each with a base file name of the ACL paper id. The first PaperMetadata entry in each file must be the header of the paper associated with the file and the remaining entries must be the references/citations.
+The __PaperMetadata__ data structure in this project follows a very similar schema as the PaperMetadata data structure in the Meta-Eval project. This project does not depend on Meta-Eval and so uses a parallel version of the data structure. JSON serialized versions of this data structure may also be used as input. The input must be a directory of files each with a base file name of the ACL paper id. The first PaperMetadata entry in each file must be the header of the paper associated with the file and the remaining entries must be the references/citations.
 
 ## Encoding ##
 
@@ -124,7 +124,7 @@ The system will write the coreference results to standard out. If the ``--output
 
 ## Examples ##
 
-The ```config/evaluation/``` directory has several examples of config files. Here are two examples as well:
+The ```config/evaluation/``` directory has several examples of config files. Here are a few examples as well:
  
  ```
  --format-type=Grobid

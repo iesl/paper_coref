@@ -64,7 +64,7 @@ The remaining mentions are then entered into the coreference algorithm. The core
 
 | Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
 | ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
-January Deliverable | Ai2 Parscit | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
+January System | Ai2 | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
 "Baseline" | pdftotext + Parscit | 97.256 | 58.231 | 72.846 | 97.715 | 76.307 | 85.694 | 97.659 | 62.050 | 75.885 |
 "AlphaOnly" | pdftotext + Parscit | 97.749 | 53.003 | 68.735 | 97.637 | 66.816 | 79.338 | 97.920 | 52.373 | 68.245 |
 "Baseline" | Grobid | 98.756 | 73.653 | 84.377 | 99.142 | 84.938 | 91.492 | 98.718 | 74.537 | 84.940 |

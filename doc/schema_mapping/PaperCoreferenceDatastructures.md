@@ -23,3 +23,31 @@ A __ParsedPaper__ is representation of a scientific paper, it is represented by 
 
 - self:LocatedCitation - _The reference representing the paper itself_
 - bib:Iterable[LocatedCitation] - _The papers referenced in this paper_
+
+## PaperMention ##
+
+The coreference algorithms work on __PaperMention__ data structures. This data structure stores the information present in the citation data structures along with an id for the mention and gold label used for evaluation.
+
+```
+id: String - a unique id for the mention
+authors: Set[String] - the authors of the paper
+title: String - the title of the paper
+venue: String - the venue the paper appears in
+date: String - the date published
+trueLabel: String - the id of the gold clustering
+isPaper: Boolean - true iff the paper was a header extraction
+goldData: PaperMention - the corresponding gold mention data
+ ```
+
+## PaperMetadata and PaperMetadataWithId #
+
+To emulate the data structures used in Meta-Eval this project has a parallel version of the __PaperMetadata__. This data structure has the following fields:
+
+```
+title: String
+venue: String
+year: Int
+authors: List[String]
+```
+
+__PaperMetadataWithId__ also includes: ```id: String```

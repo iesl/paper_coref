@@ -1,20 +1,24 @@
 # Cora Paper Coreference #
 
-This file provides documentation for how to run the coreference algorithm on the cora dataset. 
+This file provides documentation for how to run the coreference algorithm on the Cora dataset.
 
 
 ## Usage ##
 
-The paper coreference experiments on the cora data set can be run using the __CoraExperiment__ object. This can be called from the command line:
+The paper coreference experiments on the Cora dataset can be run using the __CoraPaperCoreferenceExperiment__ object. This can be called from the command line:
 
 ```
-java -Xmx1G -cp target/paper_coref-1.0-SNAPSHOT-jar-with-dependencies.jar org.allenai.scholar.paper_coref.evaluation.CoraExperiment --config=<config-file>
+java -Xmx4G -cp target/paper_coref-1.0-SNAPSHOT-jar-with-dependencies.jar org.allenai.scholar.paper_coref.evaluation.CoraPaperCoreferenceExperiment --config=<config-file>
 ```
 
-Where ```<config-file>``` is a text file containing the command line arguments for the program. Example config files are given in the ```config``` directory of this project. Each config file has the following form:
+The program uses factorie's command line argument utility. Using the argument ```--config``` allows the user to place command line arguments into the text file given as argument to ```config```.
+
+The command line arguments specify which files to use as input to the program, the format of these files, which coref algorithm to use etc.
+
+Depending on the type of input, ```<config-file>```, a text file, might have the form: 
 
 ```
---input=[directory name]
+--input=[list of filenames]
 --input-encoding=[iso-8859-1,UTF-8,etc]
 --coref-algorithms=[Baseline,AlphaOnly]
 --output=[directory name]
@@ -28,6 +32,12 @@ The input data can be downloaded from:  http://people.cs.umass.edu/~mccallum/dat
 kibl-labeled
 fahl-labeled
 utgo-labeled
+```
+
+The command line argument is:
+
+```
+--input=<path-to>/kibl-labeled,<path-to>/fahl-labeled,<path-to>/utgo-labeled
 ```
 
 The data has the following format:

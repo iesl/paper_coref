@@ -24,4 +24,13 @@ The class ```PaperCorefExperiment``` can be used to run a coreference experiment
 PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) 
 ```
 
-A set of mentions and coref algorithms are inputted into the experiment. Use the ```.run()``` method to run and evaluate the coreference algorithm. 
+A set of mentions and coref algorithms are inputted into the experiment. Several other constructors are included. Each constructor is documented in the [source code](src/main/scala/org/allenai/scholar/paper_coref/evaluation/PaperCoreferenceExperiment.scala)
+
+The ```.run()``` method is used to run and evaluate the coreference algorithm. It returns the coreference results of each algorithm as a formatted string.
+
+The resulting clustering of the coreference algorithms can be accessed by using the following methods in PaperCorefExperiment.
+
+```Scala
+def predictedClusteringResults: Map[String,Iterable[Iterable[PaperMention]]
+def predictedClustering(corefAlgName: String): Iterable[Iterable[PaperMention]]
+```

@@ -1,5 +1,11 @@
 # ACL Paper Coreference #
 
+## Overview ##
+
+We want to produce a citation graph from extracted title and bibliographic matter of PDFs of scientific papers. In practice this means we want to cluster citations from the bibliographies of papers together with citations from the titles of papers. Once we have these clusters we can link citations found in papers to the papers they cite by keeping track of the original provenance of each citation.
+
+In order to evaluate the system, we need to have a gold set of data, but this is not trivially available as the citations we are working with were extracted by a particular tool, and we want to have annotations that are robust across tools. To solve this the system also has a simple aligner that will generate gold data from a citation graph, metadata from that citation graph, and the results of extracting citations from the relevant dataset using an arbitrary extraction tool. Concretely, the aligner looks at all the citations that appeared in a given paper, looks at the names of the paper that that paper is known to have cited, and aligns the titles greedily in terms of those that are closest in edit distance (with a threshold to ensure that very poor matches aren't considered.)
+
 ## Data set ##
 
 The data set used in evaluation is a collection of ACL papers. Each paper in an ACL conference/journal has a unique identifier. A complete list of the papers in the data set is available in ```data/acl_paper_ids.txt```.

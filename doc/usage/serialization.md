@@ -2,7 +2,7 @@
 
 The __LocatedCitation__ and __PaperMetadata__ data structures can be serialized and de-serialized to and from JSON. To convert XML ACL extractions to JSON in these structures, use: ```WriteExtractionsToLocatedCitationJSON``` amd ```WriteExtractionsToPaperMetadataJSON```. 
 
-The input to these programs is a config file in a similar format to the config files for the [ACL Coreference experiment](coreference/acl_paper_coreference.md)```. 
+The input to these programs is a config file in a similar format to the config files for the [ACL Coreference experiment](coreference/acl_paper_coreference.md). 
 
 To use ```WriteExtractionsToLocatedCitationJSON```, run:
 

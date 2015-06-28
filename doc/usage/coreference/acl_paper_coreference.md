@@ -19,7 +19,7 @@ Depending on the type of input, ```<config-file>```, a text file, might have the
 ```
 --input=[directory name,file of filenames etc]
 --input-encoding=[iso-8859-1,UTF-8,etc]
---input-type=["directory","file of filenames", "file"]
+--input-type=["directory","filenames", "file"]
 --format-type=["Grobid","RPP","ParsCit",etc]
 --gold-paper-meta-data=[path-to]/data/metadata
 --gold-citation-edges=[path-to]/data/citation-edges
@@ -32,7 +32,7 @@ or
 ```
 --headers=[directory name,file of filnames, files etc]
 --references=[directory name,file of filenames, files etc]
---input-type=["directory","file of filenames", "file"]
+--input-type=["directory","filenames", "file"]
 --format-type=["Grobid","RPP","ParsCit",etc]
 --gold-paper-meta-data=[path-to]/data/metadata
 --gold-citation-edges=[path-to]/data/citation-edges
@@ -62,7 +62,7 @@ The arguments of these command line arguments can be a variety of formats: direc
 
 ```
 --input-type=directory
---input-type=file of filenames
+--input-type=filenames   //for a file of filenames
 or 
 --input-type=file
 ```
@@ -141,7 +141,7 @@ The ```config/evaluation/``` directory has several examples of config files. Her
   --format-type=Grobid
   --input=<path-to>/data/grobid-acl-processed/full-text-filenames.txt
   --input-encoding=iso-8859-1
-  --input-type=file of filenames
+  --input-type=filenames
   --output=evaluation/acl/grobid
   --gold-paper-meta-data=<path-to>/data/metadata
   --gold-citation-edges=<path-to>/data/citation-edges

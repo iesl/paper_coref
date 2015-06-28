@@ -15,7 +15,7 @@ class CitationMetricsOpts extends DefaultCmdOptions {
   val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", false)
   val headers = new CmdOption[List[String]]("headers", "Either a directory of files, a filename of files, or a list of files containing header information", false)
   val references = new CmdOption[List[String]]("references", "Either a directory of files, a filename of files, or a list of files containing reference information", false)
-  val inputType = new CmdOption[String]("input-type", "Directory, file of filenames, file", true)
+  val inputType = new CmdOption[String]("input-type", "Directory, filenames (for a file of filenames), or file", true)
   val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
   val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)

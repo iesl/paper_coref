@@ -48,7 +48,7 @@ package object paper_coref {
     input.flatMap((f) =>
       if (inputType.equalsIgnoreCase("directory"))
         new File(f).listFiles()
-      else if (inputType.equalsIgnoreCase("file of filenames")) {
+      else if (inputType.equalsIgnoreCase("filenames")) {
         new BufferedReader(new FileReader(f)).toIterator.map(new File(_)).toIterable
       } else if (inputType.equalsIgnoreCase("file")) {
         Iterable(new File(f))

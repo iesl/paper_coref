@@ -26,6 +26,7 @@ New Additions (June 2015)
 
 - The input to the coreference system can now be the XML output of [Grobid](https://github.com/kermitt2/grobid), [ParsCit](https://github.com/knmnyn/ParsCit), or [RPP](https://github.com/iesl/rpp), as well as JSON serialized versions of project data structures. For more information, see [loading data](doc/usage/loading_data.md).
 - Added Cora paper coreference experiment for evaluation.
+- Added evaluation results on [ACL data](doc/evaluation/acl_experiment.md) using Grobid and ParsCit extractions and on [the Cora dataset](doc/evaluation/cora_experiment.md).
 - Refactored and added package structure 
 - Added documentation of code and added user guides.
 

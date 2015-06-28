@@ -1,21 +1,22 @@
 package org.allenai.scholar.paper_coref.evaluation
 
-import java.io.{FileReader, BufferedReader, File}
-
 import cc.factorie.app.strings
 import cc.factorie.util.DefaultCmdOptions
+import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.coreference.Baseline
 import org.allenai.scholar.paper_coref.data_structures._
-import org.allenai.scholar.paper_coref._
 import org.allenai.scholar.paper_coref.load.Loader
-import cc.factorie._
 
 /**
  * Command line options for citation metrics script 
  */
 class CitationMetricsOpts extends DefaultCmdOptions {
   val formatType = new CmdOption[String]("format-type", "The format of the input, RPP, ParsCit, Grobid.",true)
-  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", true)
+  val input = new CmdOption[List[String]]("input", "Either a directory of files, a filename of files, or a list of files", false)
+  val headers = new CmdOption[List[String]]("headers", "Either a directory of files, a filename of files, or a list of files containing header information", false)
+  val references = new CmdOption[List[String]]("references", "Either a directory of files, a filename of files, or a list of files containing reference information", false)
+  val inputType = new CmdOption[String]("input-type", "Directory, file of filenames, file", true)
+  val inputEncoding = new CmdOption[String]("input-encoding", "UTF-8", "CODEC", "The encoding of the input files")
   val goldPaperMetaData = new CmdOption[String]("gold-paper-meta-data", "The file containing the ground truth paper meta data", true)
   val goldCitationEdges = new CmdOption[String]("gold-citation-edges", "The file containing the gold citation edges", true)
 }
@@ -36,16 +37,18 @@ object CitationMetrics {
     opts.parse(args)
     
     val loader = Loader(opts.formatType.value)
-    
-    val citationFiles: Iterable[File] =  if (opts.input.value.length == 1) {
-      if (new File(opts.input.value.head).isDirectory)
-        new File(opts.input.value.head).listFiles()
-      else
-        new BufferedReader(new FileReader(opts.input.value.head)).toIterator.map(new File(_)).toIterable
+
+    assert((opts.input.wasInvoked || (opts.headers.wasInvoked && opts.references.wasInvoked)) && !(opts.input.wasInvoked && opts.headers.wasInvoked && opts.references.wasInvoked), "Either input or headers and references must be specified.")
+
+    if (opts.input.wasInvoked) {
+      val input = parseExperimentInput(opts.input.value,opts.inputType.value)
+      printStatistics(loader.fromFiles(input).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
     } else {
-      opts.input.value.map(new File(_))
+      val headers = parseExperimentInput(opts.headers.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
+      val references = parseExperimentInput(opts.references.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
+      val joined = headers.keySet.intersect(references.keySet).flatMap(fid => headers(fid).zip(references(fid))).toList
+      printStatistics(loader.fromSeparateFiles(joined).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
     }
-    printStatistics(loader.fromFiles(citationFiles).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
   }
 
   /**

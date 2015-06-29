@@ -2,6 +2,8 @@
 
 This directory contains data files used for system evaluation. 
 
+The data files are publically available from: https://github.com/allenai/meta-eval Download the metadata and citation-edges files and place them in this directory.
+
 ## metadata ##
 
 A file containing the id, authors, title, venue and year of nearly all of the papers in the collection. The following paper ids appear in the __citation\_edges__ file, but not in this __metadata__ file:
@@ -17,7 +19,7 @@ C98-2233
 P98-2133
 ```
 
-## citation\_edges ## 
+## citation\_edges ##
 
 Each line of this file indicates an edge in the citation graph of the papers in the acl dataset. The lines are tab separated paper ids. 
 

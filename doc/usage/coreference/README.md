@@ -28,7 +28,7 @@ The class ```PaperCorefExperiment``` can be used to run a coreference experiment
 PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val corefs: Iterable[PaperCoref]) 
 ```
 
-A set of mentions and coref algorithms are inputted into the experiment. Several other constructors are included. Each constructor is documented in the [source code](https://github.com/iesl/citation_coref/blob/develop/src/main/scala/org/allenai/scholar/paper_coref/evaluation/PaperCoreferenceExperiment.scala)
+A set of mentions and coref algorithms are inputted into the experiment. Several other constructors are included. Each constructor is documented in the [source code](../../../src/main/scala/org/allenai/scholar/paper_coref/evaluation/PaperCoreferenceExperiment.scala)
 
 Use:
 

@@ -44,7 +44,7 @@ First, the PDFs of the ACL data set are processed and converted into a structure
  
 ### Schema Mapping ###
  
- Next, the schema of the XML outputs of the above systems is mapped into the schema of the paper/citation representation used in the coreference algorithms. This process is done by manually designing a mapping between the two schemas. The paper/citation representation used in the coreference algorithms is defined in ```doc/schema_mapping/PaperCoreferenceDatastrctures.md```. The schema mapping techniques used are given in ```doc/schema_mapping```.
+ Next, the schema of the XML outputs of the above systems is mapped into the schema of the paper/citation representation used in the coreference algorithms. This process is done by manually designing a mapping between the two schemas. The paper/citation representation used in the coreference algorithms is explained [here](../usage/data_structures.md). The schema mapping techniques used are given in [schema mapping](../schema_mapping).
  
  A key aspect of the schema mapping in the clustering evaluation is that each PDF is associated with an ACL paper id. For a given paper, we extract a single header mention (representing the paper with the given id) and one or reference citation mentions. Together these make up a __ParsedPaper__ representation used in the coreference system. Also note that if no header is extracted for a given PDF, the references mentioned in that paper are discarded. That is we __only__ work with papers for which a header is extracted. The mentions maintain the provenance of the id of the PDF they were extracted from. That is the header mentions have the id of the paper they refer to and the reference citations have the id of the paper they were cited in. 
  

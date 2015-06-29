@@ -18,7 +18,7 @@ The command line arguments specify which files to use as input to the program, t
 Depending on the type of input, ```<config-file>```, a text file, might have the form: 
 
 ```
---input=[list of filenames]
+--input=[list of files]
 --input-encoding=[iso-8859-1,UTF-8,etc]
 --coref-algorithms=[Baseline,AlphaOnly]
 --output=[directory name]

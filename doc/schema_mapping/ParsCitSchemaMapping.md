@@ -9,7 +9,7 @@ The ParsCit XML output provides a confidence score for the value of each field. 
 | Title | Select the ```<title>``` with the highest confidence value appearing in an ```<algorithm>``` block which is not a ```<citationList>```. |
 | Date | Select the ```<date>``` with the highest confidence value appearing in an ```<algorithm>``` block which is not a ```<citationList>```. |
 | Venue | No ```<venue>``` information is given in the header. |
-| Author | Find the ``<author>``` with the highest confidence value appearing in an ```<algorithm>```. Select all ``<author>```s with this confidence value appearing in an ```<algorithm>``` block which is not a ```<citationList>```. |
+| Author | Find the ```<author>``` with the highest confidence value appearing in an ```<algorithm>``` which is not a ```<citationList>```. Select all ``<author>```s with this confidence value appearing in an ```<algorithm>``` block which is not a ```<citationList>```. |
 
 ## References ##
 

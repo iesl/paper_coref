@@ -29,7 +29,7 @@ Select the first instance of ```<listBibl>``` in the xml output as the _referenc
 
 | Field | Mapping |
 | ----- | ------- |
-| Title |  Select the first instance ```<title>``` appearing in ```<analytic>``` with ```type``` equyal to ```main``` if it exists, otherwise select ```<title>``` appearing in ```<monogr>```. | 
+| Title |  Select the first instance ```<title>``` appearing in ```<analytic>``` with ```type``` equal to ```main``` if it exists, otherwise select ```<title>``` appearing in ```<monogr>```. |
 | Date  | Select the value of the ```when``` attribute of the first ```<date>```appearing with a value of ```published``` for the ```type``` attribute |
 | Venue | Select the first instance of ```<title>```appearing in a ```<monogr>``` in ```<sourceDesc>```. |
 | Authors | First consider, each ```<author>``` appearing in ```<analytic>```. For each ```<author>```, take the ```<surname>``` field and the ```<forename>``` field with ```type```s of ```first``` and ```middle```. Format the author names as ```Last, First Middle``` or if the last name is missing is ```First Middle```. If no authors appear in ```<analytic>```, perform the same procedure on ```<monogr>```.|

@@ -44,4 +44,4 @@ To generate these statistics, use the ```CitationMetrics``` object. For example,
 java -Xmx8G -cp target/paper_coref-1.0-SNAPSHOT-jar-with-dependencies.jar org.allenai.scholar.paper_coref.evaluation.CitationMetrics --config=<config-file>
 ```
 
-where the config file has the same format as in the (acl experiment)[docs/usage/coreference/acl_paper_coference.md], except without the ```output``` argument.
+where the config file has the same format as in the [acl experiment](docs/usage/coreference/acl_paper_coference.md), except without the ```output``` argument.

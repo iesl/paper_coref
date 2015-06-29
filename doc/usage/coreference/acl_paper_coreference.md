@@ -69,7 +69,7 @@ or
 
 ## Format Type ##
 
-The input data may be the XML formatted output of ParsCit, Grobid or RPP. Alternatively serialized JSON versions of the data structures __LocatedCitation__ and the __PaperMetaData__ may be used as input. See [serialization documentation](doc/usage/serialization/serialization.md) for more information.
+The input data may be the XML formatted output of ParsCit, Grobid or RPP. Alternatively serialized JSON versions of the data structures __LocatedCitation__ and the __PaperMetaData__ may be used as input. See [serialization documentation](../serialization.md) for more information.
 
 The format of the input data is specified as a command line argument, ```--format-type```. Each of the possible input types has an associated string for the value of this argument:
 
@@ -99,7 +99,7 @@ The file encoding of the input files can be specified. The default encoding of "
 
 ```
 --input-encoding=iso-8859-1
---input-encoding-UTF-8
+--input-encoding=UTF-8
 etc
 ```
 

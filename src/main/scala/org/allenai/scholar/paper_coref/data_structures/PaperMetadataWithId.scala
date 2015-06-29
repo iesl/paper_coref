@@ -80,7 +80,8 @@ object PaperMetadataWithId { //TODO: In the future, using JSON serialized format
    */
   def fromJSONFile(filename: String) = new BufferedReader(new InputStreamReader(new FileInputStream(filename))).toIterator.map {
     case line =>
-      parse(line).extract[PaperMetadataWithId]
+      val tmp = parse(line).extract[PaperMetadataWithId]
+      PaperMetadataWithId(tmp.id,unescapeXml(tmp.title),unescapeXml(tmp.venue),tmp.year, tmp.authors.map(unescapeXml))
   }.toIterable
   
 }

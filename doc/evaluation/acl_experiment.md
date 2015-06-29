@@ -22,14 +22,16 @@ E06-1047	A00-1002
 H05-1110	A00-1002
 ```
 
-The ACL data set also has meta data stored about each paper. The file ```data/metadata``` stores the id, title, author, venue, and year for each paper. For instance:
+The ACL data set also has meta data stored about each paper. The file ```data/metadata``` stores the id, title, author, venue, and year for each paper. For instance (the first line of JSON, reformatted):
 
 ```
-id = {D10-1001}
-author = {Rush, Alexander M.; Sontag, David; Collins, Michael John; Jaakkola, Tommi}
-title = {On Dual Decomposition and Linear Programming Relaxations for Natural Language Processing}
-venue = {EMNLP}
-year = {2010}
+{
+ "id":"D10-1001",
+ "title":"On Dual Decomposition and Linear Programming Relaxations for Natural Language Processing",
+ "venue":"EMNLP",
+ "year":2010,
+ "authors":["Rush, Alexander M."," Sontag, David"," Collins, Michael John"," Jaakkola, Tommi"]
+}
 ```
 
 ## Experiment Setup ##
@@ -65,13 +67,13 @@ The remaining mentions are then entered into the coreference algorithm. The core
 | Coref System | Processor   | Pairwise Precision  |  Pairwise Recall | Pairwise F1     | MUC Precision  |  MUC Recall | MUC F1     | B3 Precision  |  B3 Recall | B3 F1     |
 | ----------- | ----------- | ------------------- | ---------------- | --------------- | -------------- | ----------- | ---------- | ------------- | ---------- | --------- |
 January System | Ai2 | 97.711 | 63.600 | 77.049 | 98.230 | 81.282 | 88.956 | 97.903 | 68.101 | 80.326 |
-"Baseline" | pdftotext + Parscit | 97.239 | 58.204 | 72.820 | 97.706 | 76.276 | 85.672 | 97.651 | 62.002 | 75.846 |
-"AlphaOnly" | pdftotext + Parscit | 97.733 | 52.980 | 68.712 | 97.623 |  66.773 | 79.304 | 97.909 | 52.345 | 68.218 |
-"Baseline" | Grobid | 98.756 | 73.653 | 84.377 | 99.142 | 84.938 | 91.492 | 98.718 | 74.537 | 84.940 |
-"AlphaOnly" | Grobid | 98.908 | 69.017 | 81.302 | 99.172 | 82.271 | 89.935 | 98.796 | 70.126 | 82.028 |
+"Baseline" | pdftotext + Parscit | 97.239 | 58.204 | 72.820 | 97.706 | 76.275 | 85.671 | 97.650 | 62.001 | 75.846 |
+"AlphaOnly" | pdftotext + Parscit |  97.732 | 52.980 | 68.712 | 97.623 | 66.772 | 79.303 | 97.908 | 52.344 | 68.218 |
+"Baseline" | Grobid | 98.756 | 73.652 | 84.376 | 99.142 | 84.937 | 91.492 | 98.718 | 74.536 |  84.939 |
+"AlphaOnly" | Grobid | 98.908 | 69.016 |  81.302 | 99.172 | 82.270 | 89.934 | 98.796 | 70.125 | 82.027 |
 
 
- Note that slightly different results will be obtained whether the single-file grobid \& parscit data is used or the separate header and reference files. This is likely due to differences in where XML is malformed in the files.
+Note that slightly different results will be obtained whether the single-file grobid \& parscit data is used or the separate header and reference files. This is likely due to differences in where XML is malformed in the files.
 
 Note that the system also accepts RPP input and runs end-to-end on RPP data. However, as RPP is still under development, the results using RPP were not ready to report.
 

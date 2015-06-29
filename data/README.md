@@ -2,7 +2,7 @@
 
 This directory contains data files used for system evaluation. 
 
-The data files are publically available from: https://github.com/allenai/meta-eval
+The data files are publically available from: https://github.com/allenai/meta-eval Download the metadata and citation-edges files and place them in this directory.
 
 ## metadata ##
 

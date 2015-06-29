@@ -62,7 +62,7 @@ object WriteExtractionsToLocatedCitationJSON {
         paper =>
           val pw = new PrintWriter(new File(opts.output.value, paper.self.foundInId + ".json"),opts.outputEncoding.value)
           if (opts.compact.value)
-            (Iterable(paper.self) ++ paper.bib).foreach((f) => pw.print(f.toJSON))
+            (Iterable(paper.self) ++ paper.bib).foreach((f) => pw.println(f.toJSON))
           else
             (Iterable(paper.self) ++ paper.bib).foreach((f) => pw.print(f.toJSONFormatted))
           pw.close()

@@ -44,6 +44,7 @@ object WriteExtractionsToPaperMetadataJSON {
       loader.fromSeparateFiles(joined, opts.inputEncoding.value)
     }
 
+    new File(opts.output.value).mkdirs()
     papers.map((c) => (c.self.foundInId,c.toPaperMetadata)).foreach{
       case (paperId,paper) =>
         val pw = new PrintWriter(new File(opts.output.value, paperId + ".json"),opts.outputEncoding.value)

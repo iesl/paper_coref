@@ -4,7 +4,8 @@ import java.io._
 
 import cc.factorie._
 import org.apache.commons.lang.StringEscapeUtils._
-
+import org.json4s.DefaultFormats
+import org.json4s.jackson.JsonMethods._
 /**
  * Data structured used in evaluating the ACL experiment. 
  * @author John Sullivan
@@ -66,5 +67,21 @@ object PaperMetadataWithId { //TODO: In the future, using JSON serialized format
 
     s
   }
+
+  /**
+   * JSON formatting
+   */
+  implicit val formats = DefaultFormats
+  
+  /**
+   * Load paper mentions from a JSON file. 
+   * @param filename
+   * @return
+   */
+  def fromJSONFile(filename: String) = new BufferedReader(new InputStreamReader(new FileInputStream(filename))).toIterator.map {
+    case line =>
+      parse(line).extract[PaperMetadataWithId]
+  }.toIterable
+  
 }
 

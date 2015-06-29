@@ -42,12 +42,12 @@ object CitationMetrics {
 
     if (opts.input.wasInvoked) {
       val input = parseExperimentInput(opts.input.value,opts.inputType.value)
-      printStatistics(loader.fromFiles(input).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
+      printStatistics(loader.fromFiles(input).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromJSONFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
     } else {
       val headers = parseExperimentInput(opts.headers.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
       val references = parseExperimentInput(opts.references.value,opts.inputType.value).groupBy(_.getNameWithoutExtension)
       val joined = headers.keySet.intersect(references.keySet).flatMap(fid => headers(fid).zip(references(fid))).toList
-      printStatistics(loader.fromSeparateFiles(joined).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
+      printStatistics(loader.fromSeparateFiles(joined).flatMap((f) => Iterable(f.self) ++ f.bib), PaperMetadataWithId.fromJSONFile(opts.goldPaperMetaData.value), BareCitation.fromFile(opts.goldCitationEdges.value))
     }
   }
 

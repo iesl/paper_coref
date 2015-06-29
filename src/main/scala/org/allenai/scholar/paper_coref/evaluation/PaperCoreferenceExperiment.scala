@@ -105,7 +105,7 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
    * @param corefs - the coref algorithms
    */
   def this(parsedPapers: Iterable[ParsedPaper], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
-    this(parsedPapers,PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
+    this(parsedPapers,PaperMetadataWithId.fromJSONFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
 
     /**
@@ -118,6 +118,6 @@ class PaperCoreferenceExperiment(val mentions: Iterable[PaperMention], val coref
    * @param corefs - the coref algorithms to use.
    */
   def this(loader: Loader, citationFiles: Iterable[File], codec: String, goldMetaDataFilename: String, goldCitationsFilename: String, corefs: Iterable[PaperCoref]) = {
-    this(loader.fromFiles(citationFiles,codec),PaperMetadataWithId.fromFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
+    this(loader.fromFiles(citationFiles,codec),PaperMetadataWithId.fromJSONFile(goldMetaDataFilename),BareCitation.fromFile(goldCitationsFilename),corefs)
   }
 }

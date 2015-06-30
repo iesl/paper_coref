@@ -33,6 +33,7 @@ or
 --headers=[directory name,file of filnames, files etc]
 --references=[directory name,file of filenames, files etc]
 --input-type=["directory","filenames", "file"]
+--input-encoding=[iso-8859-1,UTF-8,etc]
 --format-type=["Grobid","RPP","ParsCit",etc]
 --gold-paper-meta-data=[path-to]/data/metadata
 --gold-citation-edges=[path-to]/data/citation-edges
@@ -58,7 +59,7 @@ To use data with two separate files one for the header, one for the references u
 ```
 
 
-The arguments of these command line arguments can be a variety of formats: directories, file of filenames, or files. The type is specified as:
+The arguments of these command line options can be a variety of formats: directories, file of filenames, or files. The type is specified as:
 
 ```
 --input-type=directory
